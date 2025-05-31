@@ -51,11 +51,8 @@ class LoginActivity : AppCompatActivity() {
         }
 
         textViewRegister.setOnClickListener {
-            // Aquí se implementará la navegación a la pantalla de registro
-            Toast.makeText(this, "Funcionalidad de registro próximamente", Toast.LENGTH_SHORT).show()
-            // Intent(this, RegisterActivity::class.java).also {
-            //     startActivity(it)
-            // }
+            // Navegar a la pantalla de registro
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
 
         textViewForgotPassword.setOnClickListener {
