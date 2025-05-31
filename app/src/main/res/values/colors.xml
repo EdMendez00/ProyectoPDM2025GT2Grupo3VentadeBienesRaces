@@ -7,4 +7,12 @@
     <color name="blue_normal">#0F2C59</color>
     <color name="color_gray_border">#D9D9D9</color>
     <color name="color_gold">#D6A83B</color>
+
+    <!-- Nuevos colores personalizados -->
+    <color name="white_topbar">#FFFEFE</color>
+    <color name="blue_text">#2D466F</color>
+    <color name="blue_homeclick">#063C57</color>
+    <color name="gray_text">#8795AC</color>
+    <color name="gold_link">#DEC269</color>
 </resources>
+
