@@ -15,6 +15,8 @@ class HomeActivity : AppCompatActivity() {
     private val profileFragment by lazy { ProfileFragment() }
 
     private var activeFragment: Fragment? = null
+    // Variable añadida para seguimiento de actividad
+    private var lastSelectedFragmentId: Int = R.id.homeFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
