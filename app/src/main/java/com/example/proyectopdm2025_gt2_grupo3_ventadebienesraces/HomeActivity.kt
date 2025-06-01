@@ -20,6 +20,7 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+        // Implementación de carga de fragmentos en la actividad principal
         if (savedInstanceState == null) {
             loadFragment(homeFragment)
         }
