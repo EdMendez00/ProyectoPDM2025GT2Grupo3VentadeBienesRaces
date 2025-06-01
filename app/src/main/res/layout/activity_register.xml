@@ -111,27 +111,59 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
 
-            <!-- Dos campos en una misma línea: Nombre y Apellidoo -->
+            <!-- Título para Nombre y Apellido -->
+            <LinearLayout
+                android:id="@+id/labelsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewSubtitle">
+
+                <TextView
+                    android:id="@+id/labelName"
+                    android:layout_width="21dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Nombre"
+                    android:textColor="#2D466F"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/labelLastName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Apellido"
+                    android:textColor="#2D466F"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Dos campos en una misma línea: Nombre y Apellido -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayoutFirstName"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
                 app:boxStrokeColor="@color/blue_normal"
+                app:hintEnabled="false"
                 app:layout_constraintEnd_toStartOf="@+id/textInputLayoutLastName"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewSubtitle">
+                app:layout_constraintTop_toBottomOf="@+id/labelsLayout">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextFirstName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Nombre"
+                    android:textColor="#000000"
                     android:inputType="textPersonName" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Campo para Correo -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayoutLastName"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -139,6 +171,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 app:boxStrokeColor="@color/blue_normal"
+                app:hintEnabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textInputLayoutFirstName"
                 app:layout_constraintTop_toTopOf="@+id/textInputLayoutFirstName">
@@ -148,70 +181,109 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Apellido"
+                    android:textColor="#000000"
                     android:inputType="textPersonName" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Campo para Correo -->
+            <TextView
+                android:id="@+id/labelEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Correo"
+                android:textColor="#2D466F"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayoutFirstName" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayoutEmail"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 app:boxStrokeColor="@color/blue_normal"
-                app:startIconDrawable="@android:drawable/ic_dialog_email"
+                app:hintEnabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textInputLayoutFirstName">
+                app:layout_constraintTop_toBottomOf="@+id/labelEmail"
+                app:startIconDrawable="@android:drawable/ic_dialog_email">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="tu@gmail.com"
                     android:inputType="textEmailAddress"
-                    android:hint="tu@gmail.com" />
+                    android:textColor="#000000" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Campo para Contraseña -->
+            <TextView
+                android:id="@+id/labelPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Contraseña"
+                android:textColor="#2D466F"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayoutEmail" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayoutPassword"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 app:boxStrokeColor="@color/blue_normal"
-                app:passwordToggleEnabled="true"
+                app:hintEnabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textInputLayoutEmail">
+                app:layout_constraintTop_toBottomOf="@+id/labelPassword"
+                app:passwordToggleEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Contraseña"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:textColor="#000000" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Campo para Confirmar Contraseña -->
+            <TextView
+                android:id="@+id/labelConfirmPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Confirmar Contraseña"
+                android:textColor="#2D466F"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayoutPassword" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayoutConfirmPassword"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 app:boxStrokeColor="@color/blue_normal"
-                app:passwordToggleEnabled="true"
+                app:hintEnabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textInputLayoutPassword">
+                app:layout_constraintTop_toBottomOf="@+id/labelConfirmPassword"
+                app:passwordToggleEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextConfirmPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Confirmar Contraseña"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:textColor="#000000" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Casilla de verificación -->
@@ -312,8 +384,8 @@
                 android:padding="4dp"
                 android:text="Iniciar sesión"
                 android:textColor="@color/color_gold"
-                android:textStyle="bold"
                 android:textSize="14sp"
+                android:textStyle="bold"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textViewLoginPrompt"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textViewLoginPrompt" />

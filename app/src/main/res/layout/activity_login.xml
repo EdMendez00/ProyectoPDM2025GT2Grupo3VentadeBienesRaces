@@ -135,6 +135,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 app:boxStrokeColor="@color/blue_normal"
+                app:hintEnabled="false"
                 app:startIconDrawable="@android:drawable/ic_dialog_email"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -145,7 +146,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
-                    android:hint="tucorreo@gmail.com" />
+                    android:hint="tucorreo@gmail.com"
+                    android:textColor="#000000" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -166,6 +168,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 app:boxStrokeColor="@color/blue_normal"
+                app:hintEnabled="false"
                 app:startIconDrawable="@android:drawable/ic_lock_lock"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -177,7 +180,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
-                    android:hint="Ingrese su contraseña" />
+                    android:hint="Ingrese su contraseña"
+                    android:textColor="#000000" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView

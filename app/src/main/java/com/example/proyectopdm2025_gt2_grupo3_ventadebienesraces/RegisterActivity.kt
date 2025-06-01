@@ -3,12 +3,16 @@ package com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -22,9 +26,16 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var buttonBack: LinearLayout
     private lateinit var textViewLogin: TextView
 
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+
+        // Inicializar Firebase Auth y Firestore
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
         // Inicializar vistas
         editTextFirstName = findViewById(R.id.editTextFirstName)
@@ -113,13 +124,48 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
 
-        // Aquí iría la lógica real de registro
-        Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show()
+        // Mostrar progreso
+        buttonRegister.isEnabled = false
+        buttonRegister.text = "Creando cuenta..."
 
-        Intent(this, LoginActivity::class.java).also {
-            it.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(it)
-            finish()
-        }
+        // Crear usuario en Firebase Auth
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Guardar información adicional en Firestore
+                    val user = hashMapOf(
+                        "firstName" to firstName,
+                        "lastName" to lastName,
+                        "email" to email
+                    )
+
+                    db.collection("users")
+                        .document(auth.currentUser?.uid ?: "")
+                        .set(user)
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "¡Cuenta creada con éxito!", Toast.LENGTH_SHORT).show()
+
+                            // Redirigir a HomeActivity
+                            val intent = Intent(this@RegisterActivity, HomeActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            finish()
+                        }
+                        .addOnFailureListener { e ->
+                            buttonRegister.isEnabled = true
+                            buttonRegister.text = "Crear Cuenta"
+                            Toast.makeText(this, "Error al guardar los datos: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    buttonRegister.isEnabled = true
+                    buttonRegister.text = "Crear Cuenta"
+                    Toast.makeText(this, "Error al crear la cuenta: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener {
+                buttonRegister.isEnabled = true
+                buttonRegister.text = "Crear Cuenta"
+                Toast.makeText(this, "Error inesperado: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }

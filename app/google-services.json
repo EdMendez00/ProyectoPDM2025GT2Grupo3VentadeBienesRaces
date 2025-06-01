@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "791421455350",
+    "project_id": "ventabienesraices-1eed0",
+    "storage_bucket": "ventabienesraices-1eed0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:791421455350:android:17eeae17eb4b3aaa8115d7",
+        "android_client_info": {
+          "package_name": "com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBy8PhkVueuXFV3PH-G76x5Sl_dM5HLulQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
