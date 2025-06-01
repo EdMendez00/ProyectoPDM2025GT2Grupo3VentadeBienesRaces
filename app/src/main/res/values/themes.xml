@@ -3,6 +3,9 @@
     <style name="Base.Theme.ProyectoPDM2025GT2Grupo3VentadeBienesRaíces" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Configuración de la barra de estado con iconos oscuros para fondo claro -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <style name="Theme.ProyectoPDM2025GT2Grupo3VentadeBienesRaíces" parent="Base.Theme.ProyectoPDM2025GT2Grupo3VentadeBienesRaíces" />

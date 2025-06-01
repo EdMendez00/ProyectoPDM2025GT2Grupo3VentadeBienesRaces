@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".HomeFragment">
 
     <androidx.appcompat.widget.Toolbar
@@ -11,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
+        android:fitsSystemWindows="true"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:titleTextColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
@@ -70,3 +72,6 @@
     </androidx.appcompat.widget.Toolbar>
 
 </FrameLayout>
+
+
+

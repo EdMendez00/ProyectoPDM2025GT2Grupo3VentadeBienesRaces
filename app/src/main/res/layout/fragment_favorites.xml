@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/blue_bg"
+    android:fitsSystemWindows="true"
     android:padding="16dp">
 
     <!-- Título de favoritos -->
