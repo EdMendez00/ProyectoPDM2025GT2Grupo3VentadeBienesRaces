@@ -3,5 +3,9 @@
     <style name="Base.Theme.ProyectoPDM2025GT2Grupo3VentadeBienesRaíces" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <!-- Forzar iconos oscuros incluso en tema oscuro -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 </resources>
+
