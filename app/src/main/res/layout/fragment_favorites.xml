@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/blue_bg"
+    android:padding="16dp">
+
+    <!-- Título de favoritos -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/favorites"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <!-- RecyclerView para mostrar propiedades favoritas -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_favorites"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/item_property" />
+
+    <!-- Estado vacío: Cuando no hay favoritos -->
+    <LinearLayout
+        android:id="@+id/layout_empty_favorites"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@android:drawable/ic_menu_myplaces"
+            android:tint="@color/gray_text"
+            android:contentDescription="@string/no_favorites_icon_desc" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/no_favorites_message"
+            android:textColor="@color/gray_text"
+            android:textSize="16sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_explore_properties"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/explore_properties"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/blue_normal" />
+    </LinearLayout>
+
+</LinearLayout>

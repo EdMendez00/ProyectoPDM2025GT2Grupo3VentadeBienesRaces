@@ -3,4 +3,33 @@
     <string name="nameApp">HomeClick</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Strings para la pantalla de perfil -->
+    <string name="home">Inicio</string>
+    <string name="my_account">Mi Cuenta</string>
+    <string name="home_icon_desc">Icono de inicio</string>
+    <string name="default_name">Nombre Apellido</string>
+    <string name="default_email">nombre@gmail.com</string>
+    <string name="logout">Cerrar Sesión</string>
+    <string name="my_publications">Mis Publicaciones</string>
+    <string name="favorites">Favoritos</string>
+    <string name="publications">Publicaciones</string>
+    <string name="add_button">+ Agregar</string>
+    <string name="property_image_desc">Imagen de la propiedad</string>
+    <string name="property_example_title">Moderno Apartamento en San Salvador</string>
+    <string name="property_example_location">San Salvador, San Salvador</string>
+    <string name="property_example_price">$250</string>
+    <string name="location_icon_desc">Icono de ubicación</string>
+    <string name="bedroom_icon_desc">Icono de dormitorio</string>
+    <string name="bedroom_count">2 Hab</string>
+    <string name="bathroom_icon_desc">Icono de baño</string>
+    <string name="bathroom_count">1 Baño</string>
+    <string name="area_icon_desc">Icono de área</string>
+    <string name="area_size">800 ft²</string>
+    <string name="no_favorites">No tienes propiedades favoritas</string>
+
+    <!-- Nuevas cadenas para fragment_favorites.xml -->
+    <string name="no_favorites_icon_desc">Icono de sin favoritos</string>
+    <string name="no_favorites_message">No tienes propiedades guardadas en favoritos</string>
+    <string name="explore_properties">Explorar Propiedades</string>
 </resources>

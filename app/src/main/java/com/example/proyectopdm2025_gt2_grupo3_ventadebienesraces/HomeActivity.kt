@@ -8,16 +8,21 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeActivity : AppCompatActivity() {
 
-    private val homeFragment = HomeFragment()
-    private val searchFragment = SearchFragment()
-    private val addFragment = AddFragment()
-    private val favoriteFragment = FavoriteFragment()
-    private val profileFragment = ProfileFragment()
+    private val homeFragment by lazy { HomeFragment() }
+    private val searchFragment by lazy { SearchFragment() }
+    private val addFragment by lazy { AddFragment() }
+    private val favoriteFragment by lazy { FavoriteFragment() }
+    private val profileFragment by lazy { ProfileFragment() }
 
+    private var activeFragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        if (savedInstanceState == null) {
+            loadFragment(homeFragment)
+        }
 
         val navigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         navigation.setOnItemSelectedListener { item ->
@@ -31,14 +36,28 @@ class HomeActivity : AppCompatActivity() {
             true
         }
 
-        // Load the default fragment
-        loadFragment(homeFragment)
+        navigation.selectedItemId = R.id.homeFragment
     }
 
     private fun loadFragment(fragment: Fragment) {
-        // Replace the current fragment with the selected one
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.frame_container, fragment)
-            .commit()
+        if (fragment === activeFragment) {
+            return
+        }
+
+        val transaction = supportFragmentManager.beginTransaction()
+
+        activeFragment?.let {
+            transaction.hide(it)
+        }
+
+        if (fragment.isAdded) {
+            transaction.show(fragment)
+        } else {
+            transaction.add(R.id.frame_container, fragment)
+        }
+
+        transaction.commit()
+        activeFragment = fragment
     }
 }
+

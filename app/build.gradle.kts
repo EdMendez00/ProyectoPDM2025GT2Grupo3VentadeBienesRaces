@@ -52,5 +52,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
-}
 
+    // CircleImageView para imágenes de perfil circulares
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+}
