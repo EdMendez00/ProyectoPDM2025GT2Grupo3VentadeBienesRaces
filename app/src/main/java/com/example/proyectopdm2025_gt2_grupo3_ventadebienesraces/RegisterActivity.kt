@@ -37,6 +37,9 @@ class RegisterActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
+        // Eliminar verificación de usuario actual si existe
+        // No vamos a comprobar si hay usuario autenticado para redirigir automáticamente
+
         // Inicializar vistas
         editTextFirstName = findViewById(R.id.editTextFirstName)
         editTextLastName = findViewById(R.id.editTextLastName)
@@ -128,44 +131,75 @@ class RegisterActivity : AppCompatActivity() {
         buttonRegister.isEnabled = false
         buttonRegister.text = "Creando cuenta..."
 
-        // Crear usuario en Firebase Auth
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Guardar información adicional en Firestore
-                    val user = hashMapOf(
-                        "firstName" to firstName,
-                        "lastName" to lastName,
-                        "email" to email
-                    )
+        try {
+            // Crear usuario en Firebase Auth
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Obtener el usuario actual
+                        val firebaseUser = auth.currentUser
 
-                    db.collection("users")
-                        .document(auth.currentUser?.uid ?: "")
-                        .set(user)
-                        .addOnSuccessListener {
+                        if (firebaseUser != null) {
+                            // Mostrar mensaje de éxito inmediatamente
                             Toast.makeText(this, "¡Cuenta creada con éxito!", Toast.LENGTH_SHORT).show()
 
-                            // Redirigir a HomeActivity
-                            val intent = Intent(this@RegisterActivity, HomeActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            startActivity(intent)
-                            finish()
-                        }
-                        .addOnFailureListener { e ->
+                            // Guardar información adicional en Firestore
+                            val user = hashMapOf(
+                                "firstName" to firstName,
+                                "lastName" to lastName,
+                                "email" to email
+                            )
+
+                            // IMPORTANTE: Navegamos primero a Home y luego guardamos datos en segundo plano
+                            // Esto garantiza que el usuario no quede esperando
+                            navigateToHome()
+
+                            // Guardar datos de usuario en segundo plano
+                            db.collection("users")
+                                .document(firebaseUser.uid)
+                                .set(user)
+                                .addOnFailureListener { e ->
+                                    // Solo registramos el error pero no afecta la navegación
+                                    // que ya ocurrió
+                                    println("Error guardando datos de usuario: ${e.message}")
+                                }
+                        } else {
+                            // Error: Usuario creado pero no se puede recuperar
                             buttonRegister.isEnabled = true
                             buttonRegister.text = "Crear Cuenta"
-                            Toast.makeText(this, "Error al guardar los datos: ${e.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Error: No se pudo acceder al usuario creado", Toast.LENGTH_SHORT).show()
                         }
-                } else {
-                    buttonRegister.isEnabled = true
-                    buttonRegister.text = "Crear Cuenta"
-                    Toast.makeText(this, "Error al crear la cuenta: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    } else {
+                        // Error al crear usuario
+                        buttonRegister.isEnabled = true
+                        buttonRegister.text = "Crear Cuenta"
+
+                        // Determinar el tipo de error
+                        val errorMessage = when {
+                            task.exception.toString().contains("FirebaseAuthUserCollisionException") ->
+                                "El correo electrónico ya está registrado"
+                            task.exception.toString().contains("FirebaseNetworkException") ->
+                                "Error de conexión. Verifica tu conexión a Internet"
+                            else -> "Error al crear la cuenta: ${task.exception?.localizedMessage ?: "Desconocido"}"
+                        }
+
+                        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-            .addOnFailureListener {
-                buttonRegister.isEnabled = true
-                buttonRegister.text = "Crear Cuenta"
-                Toast.makeText(this, "Error inesperado: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
+        } catch (e: Exception) {
+            // Capturar cualquier excepción no manejada
+            buttonRegister.isEnabled = true
+            buttonRegister.text = "Crear Cuenta"
+            Toast.makeText(this, "Error inesperado: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Método para navegar a HomeActivity de manera consistente
+    private fun navigateToHome() {
+        Intent(this, HomeActivity::class.java).also {
+            it.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(it)
+            finish()
+        }
     }
 }
