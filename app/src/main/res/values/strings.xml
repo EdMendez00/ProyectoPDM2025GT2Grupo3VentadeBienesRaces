@@ -33,5 +33,8 @@
     <string name="no_favorites_message">No tienes propiedades guardadas en favoritos</string>
     <string name="explore_properties">Explorar Propiedades</string>
     <string name="title_search_home">Encuentra la casa de tus sueños</string>
-    <string name="hint_search_home">Buscar por ubicación, tipo propiedad...</string>
+    <string name="hint_search_home">Buscar por ubicación, tipo propiedad…</string>
+    <string name="title_toolbar_search">Explora Inmuebles</string>
+    <string name="select_category">Categoria</string>
+    <string name="select_filtro">Filtro</string>
 </resources>
