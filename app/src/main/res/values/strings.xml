@@ -32,4 +32,6 @@
     <string name="no_favorites_icon_desc">Icono de sin favoritos</string>
     <string name="no_favorites_message">No tienes propiedades guardadas en favoritos</string>
     <string name="explore_properties">Explorar Propiedades</string>
+    <string name="title_search_home">Encuentra la casa de tus sueños</string>
+    <string name="hint_search_home">Buscar por ubicación, tipo propiedad...</string>
 </resources>
