@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -34,37 +35,350 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.UUID
+import kotlin.text.get
 
 class AddFragment : Fragment() {
     // ViewModel
     private lateinit var propiedadViewModel: PropiedadViewModel
 
     // UI Components
-    private lateinit var etTitle: TextInputEditText
-    private lateinit var etDescription: TextInputEditText
-    private lateinit var etPrice: TextInputEditText
+    private lateinit var etTitle: EditText
+    private lateinit var etDescription: EditText
+    private lateinit var etPrice: EditText
     private lateinit var actvPropertyType: AutoCompleteTextView
-    private lateinit var etBedrooms: TextInputEditText
-    private lateinit var etBathrooms: TextInputEditText
-    private lateinit var etArea: TextInputEditText
-    private lateinit var etAddress: TextInputEditText
+    private lateinit var etBedrooms: EditText
+    private lateinit var etBathrooms: EditText
+    private lateinit var etArea: EditText
+    private lateinit var etAddress: EditText
     private lateinit var actvMunicipio: AutoCompleteTextView
     private lateinit var actvDepartamento: AutoCompleteTextView
     private lateinit var btnUploadImage: Button
     private lateinit var layoutImagePreviews: LinearLayout
-    private lateinit var etFeature: TextInputEditText
+    private lateinit var etFeature: EditText
     private lateinit var btnAddFeature: Button
     private lateinit var tvNoFeatures: TextView
     private lateinit var rvFeatures: RecyclerView
-    private lateinit var etContactName: TextInputEditText
-    private lateinit var etPhoneNumber: TextInputEditText
-    private lateinit var etEmail: TextInputEditText
-    private lateinit var etCompany: TextInputEditText
+    private lateinit var etContactName: EditText
+    private lateinit var etPhoneNumber: EditText
+    private lateinit var etEmail: EditText
+    private lateinit var etCompany: EditText
     private lateinit var btnPublish: Button
 
     private val imageUris = mutableListOf<Uri>()
     private val features = mutableListOf<String>()
     private lateinit var featureAdapter: FeatureAdapter
+
+    private val categories = arrayOf("Casa", "Apartamento", "Terreno", "Comercial")
+    private val departamentos = arrayOf(
+        "Ahuachapán",
+        "Santa Ana",
+        "Sonsonate",
+        "Chalatenango",
+        "La Libertad",
+        "San Salvador",
+        "Cuscatlán",
+        "La Paz",
+        "Cabañas",
+        "San Vicente",
+        "Usulután",
+        "San Miguel",
+        "Morazán",
+        "La Unión"
+    )
+
+    private val municipiosMap = arrayOf(
+        "Ahuachapán" to listOf(
+            "Ahuachapán",
+            "Apaneca" ,
+            "Atiquizaya",
+            "Concepción de Ataco",
+            "El Refugio",
+            "Guaymango",
+            "Jujutla",
+            "San Francisco Menéndez",
+            "San Lorenzo",
+            "San Pedro Puxtla",
+            "Tacuba",
+            "Turín"
+        ),
+        "Santa Ana" to listOf(
+            "Candelaria de la Frontera",
+            "Coatepeque",
+            "Chalchuapa",
+            "El Congo",
+            "El Porvenir",
+            "Masahuat",
+            "Metapán",
+            "San Antonio Pajonal",
+            "San Sebastián Salitrillo",
+            "Santa Ana",
+            "Santa Rosa Guachipilin",
+            "Santiago de la Frontera",
+            "Texistepeque"
+        ),
+        "Sonsonate" to listOf(
+            "Acajutla",
+            "Armenia",
+            "Caluco",
+            "Cuisnahuat",
+            "Santa Isabel Ishuatán",
+            "Izalco",
+            "Juayúa",
+            "Nahuizalco",
+            "Nahuilingo",
+            "Salcoatitán",
+            "San Antonio del Monte",
+            "San Julián",
+            "Santa Catarina Masahuat",
+            "Santo Domingo de Guzmán",
+            "Sonsonate",
+            "Sonzacate"
+        ),
+        "Chalatenango" to listOf(
+            "Agua Caliente",
+            "Arcatao",
+            "Azacualpa",
+            "Citalá",
+            "Comalapa",
+            "Concepción Quezaltepeque",
+            "Chalatenango",
+            "Dulce Nombre de María",
+            "El Carrizal",
+            "El Paraíso",
+            "La Laguna",
+            "La Palma",
+            "La Reina",
+            "Las Vueltas",
+            "Nombre de Jesús",
+            "Nueva Concepción",
+            "Nueva Trinidad",
+            "Ojos de Agua",
+            "Potonico",
+            "San Antonio de La Cruz",
+            "San Antonio Los Ranchos",
+            "San Fernando",
+            "San Francisco Lempa",
+            "San Francisco Morazán",
+            "San Ignacio",
+            "San Isidro Labrador",
+            "San José Cancasque",
+            "San José Las Flores",
+            "San Luis del Carmen",
+            "San Miguel de Mercedes",
+            "San Rafael",
+            "Santa Rita",
+            "Tejutla"
+        ),
+        "La Libertad" to listOf(
+            "Antiguo Cuscatlán",
+            "Ciudad Arce",
+            "Colón",
+            "Comasagua",
+            "Chiltiupán",
+            "Huizúcar",
+            "Jayaque",
+            "Jicalapa",
+            "La Libertad",
+            "Nuevo Cuscatlán",
+            "Santa Tecla",
+            "Quezaltepeque",
+            "Sacacoyo",
+            "San José Villanueva",
+            "San Juan Opico",
+            "San Pablo Tacachico",
+            "Tamanique",
+            "Talnique",
+            "Teotepeque",
+            "Tepecoyo",
+            "Zaragoza"
+        ),
+        "San Salvador" to listOf(
+            "Aguilares",
+            "Apopa",
+            "Ayutuxtepeque",
+            "Cuscatancingo",
+            "El Paisnal",
+            "Guazapa",
+            "Ilopango",
+            "Mejicanos",
+            "Nejapa",
+            "Panchimalco",
+            "Rosario de Mora",
+            "San Marcos",
+            "San Martin",
+            "San Salvador",
+            "Santiago Texacuangos",
+            "Santo Tomas",
+            "Soyapango",
+            "Tonacatepeque",
+            "Ciudad Delgado"
+        ),
+        "Cuscatlán" to listOf(
+            "Candelaria",
+            "Cojutepeque",
+            "El Carmen",
+            "El Rosario",
+            "Monte San Juan",
+            "Oratorio de Concepción",
+            "San Bartolomé Perulapía",
+            "San Cristóbal",
+            "San José Guayabal",
+            "San Pedro Perulapán",
+            "San Rafael Cedros",
+            "San Ramón",
+            "Santa Cruz Analquito",
+            "Santa Cruz Michapa",
+            "Suchitoto",
+            "Tenancingo"
+        ),
+        "La Paz" to listOf(
+            "Cuyultitán",
+            "El Rosario",
+            "Jerusalén",
+            "Mercedes La Ceiba",
+            "Olocuilta",
+            "Paraíso de Osorio",
+            "San Antonio Masahuat",
+            "San Emigdio",
+            "San Francisco Chinameca",
+            "San Juan Nonualco",
+            "San Juan Talpa",
+            "San Juan Tepezontes",
+            "San Luis Talpa",
+            "San Miguel Tepezontes",
+            "San Pedro Masahuat",
+            "San Pedro Nonualco",
+            "San Rafael Obrajuelo",
+            "Santa María Ostuma",
+            "Santiago Nonualco",
+            "Tapalhuaca",
+            "Zacatecoluca",
+            "San Luis La Heradura",
+            "Cinquera",
+            "Guacotecti"
+        ),
+        "Cabañas" to listOf(
+            "Cinquera",
+            "Guacotecti",
+            "Ilobasco",
+            "Jutiapa",
+            "San Isidro",
+            "Sensuntepeque",
+            "Tejutepeque",
+            "Victoria",
+            "Dolores"
+        ),
+        "San Vicente" to listOf(
+            "Apastepeque",
+            "Guadalupe",
+            "San Cayetano Istepeque",
+            "Santa Clara",
+            "Santo Domingo",
+            "San Esteban Catarina",
+            "San Ildefonso",
+            "San Lorenzo",
+            "San Sebastián",
+            "San Vicente",
+            "Tecoluca",
+            "Tepetitán",
+            "Verapaz"
+        ),
+        "Usulután" to listOf(
+            "Alegría",
+            "Berlín",
+            "California",
+            "Concepción Batres",
+            "El Triunfo",
+            "Ereguayquín",
+            "Estanzuelas",
+            "Jiquilisco",
+            "Jucuapa",
+            "Jucuarán",
+            "Mercedes Umaña",
+            "Nueva Granada",
+            "Ozatlán",
+            "Puerto El Triunfo",
+            "San Agustín",
+            "San Buenaventura",
+            "San Dionisio",
+            "Santa Elena",
+            "San Francisco Javier",
+            "Santa María",
+            "Santiago de María",
+            "Tecapán",
+            "Usulután"
+        ),
+        "San Miguel" to listOf(
+            "Carolina",
+            "Ciudad Barrios",
+            "Comacarán",
+            "Chapeltique",
+            "Chinameca",
+            "Chirilagua",
+            "El Tránsito",
+            "Lolotique",
+            "Moncagua",
+            "Nueva Guadalupe",
+            "Nuevo Edén de San Juan",
+            "Quelepa",
+            "San Antonio del Mosco",
+            "San Gerardo",
+            "San Jorge",
+            "San Luis de la Reina",
+            "San Miguel",
+            "San Rafael Oriente",
+            "Sesori",
+            "Uluazapa"
+        ),
+        "Morazán" to listOf(
+            "Arambala",
+            "Cacaopera",
+            "Corinto",
+            "Chilanga",
+            "Delicias de Concepción",
+            "El Divisadero",
+            "El Rosario",
+            "Gualococti",
+            "Guatajiagua",
+            "Joateca",
+            "Jocoaitique",
+            "Jocoro",
+            "Lolotiquillo",
+            "Meanguera",
+            "Osicala",
+            "Perquín",
+            "San Carlos",
+            "San Fernando",
+            "San Francisco Gotera",
+            "San Isidro",
+            "San Simón",
+            "Sensembra",
+            "Sociedad",
+            "Torola",
+            "Yamabal",
+            "Yoloaiquín"
+        ),
+        "La Unión" to listOf(
+            "Anamoros",
+            "Bolívar",
+            "Concepción de Oriente",
+            "Conchagua",
+            "El Carmen",
+            "El Sauce",
+            "Intipucá",
+            "La Unión",
+            "Lislique",
+            "Meanguera del Golfo",
+            "Nueva Esparta",
+            "Pasaquina",
+            "Polorós",
+            "San Alejo",
+            "San José",
+            "Santa Rosa de Lima",
+            "Yayantique",
+            "Yucuaiquín"
+        )
+    )
 
     // Launcher para seleccionar imágenes
     private val pickImageLauncher = registerForActivityResult(
@@ -87,7 +401,8 @@ class AddFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_add, container, false)
+        val view =  inflater.inflate(R.layout.fragment_add, container, false)
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -129,19 +444,26 @@ class AddFragment : Fragment() {
 
     private fun setupSpinners() {
         // Configurar spinner de tipos de propiedad
-        val propertyTypes = arrayOf("Casa", "Apartamento", "Terreno", "Local comercial", "Oficina")
-        val propertyTypeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, propertyTypes)
-        actvPropertyType.setAdapter(propertyTypeAdapter)
+        val typeSpinner = view?.findViewById<AutoCompleteTextView>(R.id.actvPropertyType)
+        val typeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, categories)
+        typeSpinner?.setAdapter(typeAdapter)
 
-        // Configurar spinner de municipios
-        val municipios = arrayOf("San Salvador", "Santa Ana", "San Miguel", "Sonsonate", "La Libertad")
-        val municipioAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, municipios)
-        actvMunicipio.setAdapter(municipioAdapter)
-
-        // Configurar spinner de departamentos
-        val departamentos = arrayOf("San Salvador", "Santa Ana", "San Miguel", "Sonsonate", "La Libertad", "Ahuachapán", "Cabañas", "Chalatenango", "Cuscatlán", "Morazán", "La Paz", "La Unión", "San Vicente", "Usulután")
+        // Departamento spinner
         val departamentoAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, departamentos)
         actvDepartamento.setAdapter(departamentoAdapter)
+
+        // Municipio spinner - initially disabled
+        actvMunicipio.isEnabled = false
+
+        actvDepartamento.setOnItemClickListener { _, _, position, _ ->
+            val selectedDepartamento = departamentos[position]
+            // Find municipios for selected departamento
+            val municipios = municipiosMap.firstOrNull { it.first == selectedDepartamento }?.second ?: emptyList()
+            val municipioAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, municipios)
+            actvMunicipio.setAdapter(municipioAdapter)
+            actvMunicipio.setText("") // Clear previous selection
+            actvMunicipio.isEnabled = true
+        }
     }
 
     private fun setupRecyclerView() {
