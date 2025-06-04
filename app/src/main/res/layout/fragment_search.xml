@@ -69,6 +69,7 @@
                         android:hint="@string/hint_search_home"
                         android:paddingStart="10dp"
                         android:textColorHint="@color/color_gray_border"
+                        android:textColor="@color/black"
                         android:layout_marginTop="16dp"
                         tools:ignore="RtlSymmetry" />
                 </LinearLayout>
@@ -97,7 +98,8 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/input_background_gray"
                             android:textSize="12sp"
-                            android:inputType="none"/>
+                            android:inputType="none"
+                            android:textColor="@color/black"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Spinner derecho -->
@@ -119,7 +121,8 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/input_background_gray"
                             android:textSize="12sp"
-                            android:inputType="none"/>
+                            android:inputType="none"
+                            android:textColor="@color/black"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -135,3 +138,4 @@
     </LinearLayout>
 
 </FrameLayout>
+

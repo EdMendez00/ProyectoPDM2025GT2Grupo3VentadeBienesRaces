@@ -101,6 +101,7 @@
                         android:paddingHorizontal="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="12dp"
+                        android:textColor="@color/black"
                         />
 
                     <!-- Campo Descripción -->
@@ -125,6 +126,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="12dp"
                         android:gravity="top|start"
+                        android:textColor="@color/black"
                         />
 
 
@@ -160,6 +162,7 @@
                                 android:paddingHorizontal="10dp"
                                 android:layout_marginTop="10dp"
                                 android:layout_marginBottom="12dp"
+                                android:textColor="@color/black"
                                 />
 
                         </LinearLayout>
@@ -200,7 +203,8 @@
                                     android:layout_height="wrap_content"
                                     android:background="@drawable/box_input"
                                     android:textSize="15sp"
-                                    android:inputType="none"/>
+                                    android:inputType="none"
+                                    android:textColor="@color/black"/>
                             </com.google.android.material.textfield.TextInputLayout>
                         </LinearLayout>
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -239,6 +243,7 @@
                                 android:paddingHorizontal="10dp"
                                 android:layout_marginTop="10dp"
                                 android:layout_marginBottom="12dp"
+                                android:textColor="@color/black"
                                 />
                         </LinearLayout>
 
@@ -269,6 +274,7 @@
                                 android:paddingHorizontal="10dp"
                                 android:layout_marginTop="10dp"
                                 android:layout_marginBottom="12dp"
+                                android:textColor="@color/black"
                                 />
                         </LinearLayout>
 
@@ -298,6 +304,7 @@
                                 android:paddingHorizontal="10dp"
                                 android:layout_marginTop="10dp"
                                 android:layout_marginBottom="12dp"
+                                android:textColor="@color/black"
                                 />
                         </LinearLayout>
                     </LinearLayout>
@@ -347,6 +354,7 @@
                         android:paddingHorizontal="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="12dp"
+                        android:textColor="@color/black"
                         />
 
                     <LinearLayout
@@ -391,7 +399,8 @@
                                     android:layout_height="wrap_content"
                                     android:background="@drawable/box_input"
                                     android:textSize="15sp"
-                                    android:inputType="none"/>
+                                    android:inputType="none"
+                                    android:textColor="@color/black"/>
                             </com.google.android.material.textfield.TextInputLayout>
                         </LinearLayout>
 
@@ -431,7 +440,8 @@
                                     android:layout_height="wrap_content"
                                     android:background="@drawable/box_input"
                                     android:textSize="15sp"
-                                    android:inputType="none"/>
+                                    android:inputType="none"
+                                    android:textColor="@color/black"/>
                             </com.google.android.material.textfield.TextInputLayout>
                         </LinearLayout>
                     </LinearLayout>
@@ -522,6 +532,7 @@
                             android:paddingHorizontal="10dp"
                             android:layout_marginBottom="12dp"
                             android:layout_marginEnd="10dp"
+                            android:textColor="@color/black"
                             />
 
                         <Button
@@ -587,6 +598,7 @@
                         android:paddingHorizontal="10dp"
                         android:layout_marginBottom="12dp"
                         android:layout_marginTop="10dp"
+                        android:textColor="@color/black"
                         />
 
                     <!-- Número de teléfono -->
@@ -610,6 +622,7 @@
                         android:paddingHorizontal="10dp"
                         android:layout_marginBottom="12dp"
                         android:layout_marginTop="10dp"
+                        android:textColor="@color/black"
                         />
 
                     <!-- Correo electrónico -->
@@ -633,6 +646,7 @@
                         android:paddingHorizontal="10dp"
                         android:layout_marginBottom="12dp"
                         android:layout_marginTop="10dp"
+                        android:textColor="@color/black"
                         />
 
                     <!-- Empresa -->
@@ -656,6 +670,7 @@
                         android:paddingHorizontal="10dp"
                         android:layout_marginBottom="12dp"
                         android:layout_marginTop="10dp"
+                        android:textColor="@color/black"
                         />
                 </LinearLayout>
 
