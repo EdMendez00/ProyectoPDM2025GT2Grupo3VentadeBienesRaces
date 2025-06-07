@@ -22,10 +22,16 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
 
-        // Inicializar Firebase Auth
+        // Verificar si el usuario ya está autenticado
         auth = FirebaseAuth.getInstance()
+        if (auth.currentUser != null) {
+            navigateToHome()
+            finish()
+            return
+        }
+
+        setContentView(R.layout.activity_login)
 
         // Inicializar vistas
         editTextEmail = findViewById(R.id.editTextEmail)

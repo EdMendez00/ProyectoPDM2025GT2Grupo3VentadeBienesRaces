@@ -1,10 +1,12 @@
 package com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 
 class HomeActivity : AppCompatActivity() {
 
@@ -18,8 +20,17 @@ class HomeActivity : AppCompatActivity() {
     // Variable añadida para seguimiento de actividad
     private var lastSelectedFragmentId: Int = R.id.homeFragment
 
+    private val auth by lazy { FirebaseAuth.getInstance() }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Verificar autenticación
+        if (auth.currentUser == null) {
+            redirectToLogin()
+            return
+        }
+
         setContentView(R.layout.activity_home)
 
         // Implementación de carga de fragmentos en la actividad principal
@@ -61,6 +72,13 @@ class HomeActivity : AppCompatActivity() {
 
         transaction.commit()
         activeFragment = fragment
+    }
+
+    private fun redirectToLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 }
 

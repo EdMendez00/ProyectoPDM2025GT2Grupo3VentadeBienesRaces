@@ -123,20 +123,20 @@ class ProfileFragment : Fragment() {
         // Botón de cerrar sesión
         btnLogout.setOnClickListener {
             auth.signOut()
+
             // Navegación a la pantalla de login
             val intent = Intent(activity, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
+            activity?.finish()
         }
 
         // Botón de agregar propiedad
         btnAddProperty.setOnClickListener {
-            // Aquí implementarías la navegación a la pantalla de agregar propiedad
-            // Por ejemplo:
-            // val intent = Intent(activity, AddPropertyActivity::class.java)
-            // startActivity(intent)
-
-            Toast.makeText(context, "Agregar propiedad", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.frame_container, AddFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
         // Ícono de home
