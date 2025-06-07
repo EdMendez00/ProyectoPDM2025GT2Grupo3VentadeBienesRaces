@@ -5,6 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.adapters.PublicacionAdapter
+import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Dimensiones
+import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Propiedad
+import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Ubicacion
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -35,6 +41,72 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.rvPublicaciones)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val publicaciones = listOf(
+            Propiedad(
+                titulo = "Casa Moderna en Ciudad",
+                descripcion = "Casa moderna con acabados de lujo y excelente ubicación.",
+                precio = 150000.0,
+                ubicacion = Ubicacion(
+                    direccion = "Colonia Escalón, Calle 5, San Salvador",
+                    latitud = 13.6989,
+                    longitud = -89.1914
+                ),
+                dimensiones = Dimensiones(
+                    largo = 25.0,
+                    ancho = 10.0,
+                    area = 250.0
+                ),
+                caracteristicas = listOf("3 dormitorios", "2 baños", "Cocina integral", "Jardín"),
+                imagenes = listOf("https://images.unsplash.com/photo-1678895223308-da40c609e39b?q=80&w=1888&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"),
+                estado = "DISPONIBLE",
+                medioContacto = "Tel: 2222-3333"
+            ),
+            Propiedad(
+                titulo = "Apartamento de Lujo",
+                descripcion = "Apartamento con vista panorámica y amenidades exclusivas.",
+                precio = 120000.0,
+                ubicacion = Ubicacion(
+                    direccion = "Av. Las Palmas #12, Santa Tecla",
+                    latitud = 13.6731,
+                    longitud = -89.2797
+                ),
+                dimensiones = Dimensiones(
+                    largo = 12.0,
+                    ancho = 10.0,
+                    area = 120.0
+                ),
+                caracteristicas = listOf("2 dormitorios", "2 baños", "Piscina", "Gimnasio"),
+                imagenes = listOf("https://images.unsplash.com/photo-1748050868829-74a5a43f79c6?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"),
+                estado = "DISPONIBLE",
+                medioContacto = "Tel: 5555-6666"
+            ),
+            Propiedad(
+                titulo = "Residencia Familiar",
+                descripcion = "Amplia residencia ideal para familias grandes.",
+                precio = 200000.0,
+                ubicacion = Ubicacion(
+                    direccion = "Calle El Mirador, Km 10, La Libertad",
+                    latitud = 13.4883,
+                    longitud = -89.3226
+                ),
+                dimensiones = Dimensiones(
+                    largo = 35.0,
+                    ancho = 10.0,
+                    area = 350.0
+                ),
+                caracteristicas = listOf("4 dormitorios", "3 baños", "Terraza", "Cochera"),
+                imagenes = listOf("https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd"),
+                estado = "DISPONIBLE",
+                medioContacto = "Tel: 7777-8888"
+            )
+        )
+        recyclerView.adapter = PublicacionAdapter(publicaciones)
     }
 
     companion object {
