@@ -1,6 +1,7 @@
 package com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -31,8 +32,19 @@ class HomeActivity : AppCompatActivity() {
             true
         }
 
+<<<<<<< Updated upstream
         // Load the default fragment
         loadFragment(homeFragment)
+=======
+        // Verificar si se debe navegar a una sección específica
+        val navigateTo = intent.getStringExtra("NAVIGATE_TO")
+        if (navigateTo == "MIS_PUBLICACIONES") {
+            Log.d("HomeActivity", "Navegando a Mis Publicaciones")
+            navigation.selectedItemId = R.id.profileFragment
+        } else {
+            navigation.selectedItemId = R.id.homeFragment
+        }
+>>>>>>> Stashed changes
     }
 
     private fun loadFragment(fragment: Fragment) {

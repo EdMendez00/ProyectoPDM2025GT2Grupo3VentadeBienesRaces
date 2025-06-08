@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#CCCCCC" /> <!-- Color gris claro -->
+    <stroke android:width="1dp" android:color="#AAAAAA" /> <!-- Borde gris un poco más oscuro -->
+
+    <!-- Dibujar un icono de casa simple en el centro -->
+    <padding android:left="16dp" android:top="16dp" android:right="16dp" android:bottom="16dp" />
+</shape>
+

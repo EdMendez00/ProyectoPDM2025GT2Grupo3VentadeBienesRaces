@@ -69,4 +69,192 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+<<<<<<< Updated upstream
 </FrameLayout>
+=======
+        </androidx.appcompat.widget.Toolbar>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/blue_light"
+                    android:paddingHorizontal="21dp"
+                    android:paddingTop="40dp"
+                    android:paddingBottom="80dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/title_search_home"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/blue_normal"/>
+
+                    <EditText
+                        android:id="@+id/et_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/input_background"
+                        android:drawableStart="@drawable/search_24px"
+                        android:drawablePadding="5dp"
+                        android:hint="@string/hint_search_home"
+                        android:paddingStart="10dp"
+                        android:textColorHint="@color/color_gray_border"
+                        android:textColor="@color/black"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginHorizontal="10dp"
+                        tools:ignore="RtlSymmetry" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="30dp"
+                        android:text="Propiedades Destacadas"
+                        android:textAlignment="center"
+                        android:textColor="@color/blue_normal"
+                        android:textStyle="bold"
+                        android:textSize="17sp"/>
+                </LinearLayout>
+
+                <!-- Selector de pestañas personalizado con estilo moderno (similar a ProfileFragment) -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="8dp"
+                    app:cardBackgroundColor="@color/color_gray_border"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="6dp"
+                        android:weightSum="3">
+
+                        <!-- Pestaña "Todas" (Activa) -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/tab_all_properties"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/white"
+                            app:cardCornerRadius="20dp"
+                            app:cardElevation="0dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:paddingTop="10dp"
+                                android:paddingBottom="10dp"
+                                android:paddingStart="4dp"
+                                android:paddingEnd="4dp"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:text="Todas"
+                                android:textColor="@color/blue_normal"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Pestaña "Casas" (Inactiva) -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/tab_houses"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/color_gray_border"
+                            app:cardCornerRadius="20dp"
+                            app:cardElevation="0dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:paddingTop="10dp"
+                                android:paddingBottom="10dp"
+                                android:paddingStart="4dp"
+                                android:paddingEnd="4dp"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:text="Casas"
+                                android:textColor="@color/gray_text"
+                                android:textSize="14sp" />
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Pestaña "Apartamentos" (Inactiva) -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/tab_apartments"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/color_gray_border"
+                            app:cardCornerRadius="20dp"
+                            app:cardElevation="0dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:paddingTop="10dp"
+                                android:paddingBottom="10dp"
+                                android:paddingStart="4dp"
+                                android:paddingEnd="4dp"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:text="Apartamentos"
+                                android:textColor="@color/gray_text"
+                                android:textSize="14sp" />
+                        </androidx.cardview.widget.CardView>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Contenedor para mostrar/ocultar la lista de propiedades -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp">
+
+                    <!-- Añadir mensaje para cuando no hay propiedades -->
+                    <TextView
+                        android:id="@+id/tv_no_properties"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No hay propiedades disponibles"
+                        android:textAlignment="center"
+                        android:padding="16dp"
+                        android:visibility="gone"/>
+
+                    <!-- RecyclerView para mostrar las propiedades con el mismo estilo que en perfil -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_properties"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingBottom="80dp"
+                        android:paddingHorizontal="8dp"/>
+                </FrameLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+</FrameLayout>
+
+>>>>>>> Stashed changes
