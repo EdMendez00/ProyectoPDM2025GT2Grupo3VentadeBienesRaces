@@ -15,7 +15,13 @@ import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Ubicacion
 import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.viewmodel.PropiedadViewModel
 import android.widget.TextView
 import android.util.Log
+import androidx.lifecycle.Observer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Date
+import java.util.concurrent.atomic.AtomicInteger
 
 class HomeFragment : Fragment() {
 
@@ -59,14 +65,19 @@ class HomeFragment : Fragment() {
 
     private fun observarPropiedadesBaseDeDatos() {
         // Observar cambios en las propiedades disponibles desde la base de datos
-        propiedadViewModel.propiedadesDisponibles.observe(viewLifecycleOwner) { propiedadesEntity ->
+        propiedadViewModel.propiedadesDisponibles.observe(viewLifecycleOwner, Observer { propiedadesEntity ->
             Log.d("HomeFragment", "Propiedades obtenidas desde DB: ${propiedadesEntity.size}")
 
             if (propiedadesEntity.isNotEmpty()) {
-                // Convertir PropiedadEntity a Propiedad (modelo para la UI)
-                val propiedades = propiedadesEntity.map { entity ->
-                    Propiedad(
-                        id = entity.id.toString(), // Convertir Long a String
+                // Tenemos propiedades en la base de datos
+                val propiedadesConvertidas = mutableListOf<Propiedad>()
+                val contador = AtomicInteger(propiedadesEntity.size)
+
+                // Procesar cada propiedad
+                for (entity in propiedadesEntity) {
+                    // Primero, convertir la propiedad básica
+                    val propiedadConvertida = Propiedad(
+                        id = entity.id.toString(),
                         titulo = entity.titulo,
                         descripcion = entity.descripcion,
                         precio = entity.precio,
@@ -80,35 +91,93 @@ class HomeFragment : Fragment() {
                             ancho = entity.ancho,
                             area = entity.area
                         ),
-                        // Convertir string separado por comas a lista
-                        caracteristicas = entity.caracteristicas
-                            .split(",")
-                            .filter { it.isNotEmpty() },
-                        // Por ahora, no tenemos imágenes
-                        imagenes = emptyList(),
+                        caracteristicas = entity.caracteristicas.split(",").filter { it.isNotEmpty() },
+                        imagenes = emptyList(), // Inicialmente vacío, lo llenaremos después
                         estado = entity.estado,
                         medioContacto = entity.medioContacto,
                         vendedorId = entity.vendedorId,
                         fechaPublicacion = entity.fechaPublicacion
                     )
+
+                    // Ahora, cargar las imágenes asociadas a esta propiedad
+                    propiedadViewModel.getImagenesByPropiedad(entity.id).observe(viewLifecycleOwner, Observer { imagenesEntity ->
+                        // Extraer rutas de imágenes
+                        val rutasImagenes = imagenesEntity.map { it.rutaImagen }
+
+                        // Clonar la propiedad con la lista de imágenes actualizada
+                        val propiedadFinal = propiedadConvertida.copy(imagenes = rutasImagenes)
+
+                        // Añadir a la lista
+                        propiedadesConvertidas.add(propiedadFinal)
+
+                        Log.d("HomeFragment", "Propiedad ${entity.id} tiene ${rutasImagenes.size} imágenes")
+
+                        // Si es la última propiedad, actualizar el UI
+                        if (contador.decrementAndGet() == 0) {
+                            mostrarPropiedades(propiedadesConvertidas)
+                        }
+                    })
                 }
 
-                // Actualizar el adapter con las propiedades convertidas
-                val adapter = PublicacionAdapter(propiedades)
-                recyclerView.adapter = adapter
+                // En caso de que no haya imágenes (para evitar bloqueos)
+                CoroutineScope(Dispatchers.Main).launch {
+                    // Esperar un poco y verificar si tenemos propiedades
+                    withContext(Dispatchers.IO) {
+                        Thread.sleep(500)
+                    }
 
-                // Mostrar RecyclerView y ocultar mensaje
-                tvNoProperties.visibility = View.GONE
-                recyclerView.visibility = View.VISIBLE
-
-                Log.d("HomeFragment", "Propiedades mostradas: ${propiedades.size}")
+                    if (propiedadesConvertidas.isNotEmpty()) {
+                        mostrarPropiedades(propiedadesConvertidas)
+                    } else if (contador.get() > 0) {
+                        // Aún estamos esperando las imágenes, mostrar las propiedades sin imágenes
+                        for (entity in propiedadesEntity) {
+                            val propiedadSinImagenes = Propiedad(
+                                id = entity.id.toString(),
+                                titulo = entity.titulo,
+                                descripcion = entity.descripcion,
+                                precio = entity.precio,
+                                ubicacion = Ubicacion(
+                                    direccion = entity.direccion,
+                                    latitud = entity.latitud,
+                                    longitud = entity.longitud
+                                ),
+                                dimensiones = Dimensiones(
+                                    largo = entity.largo,
+                                    ancho = entity.ancho,
+                                    area = entity.area
+                                ),
+                                caracteristicas = entity.caracteristicas.split(",").filter { it.isNotEmpty() },
+                                imagenes = emptyList(),
+                                estado = entity.estado,
+                                medioContacto = entity.medioContacto,
+                                vendedorId = entity.vendedorId,
+                                fechaPublicacion = entity.fechaPublicacion
+                            )
+                            propiedadesConvertidas.add(propiedadSinImagenes)
+                        }
+                        mostrarPropiedades(propiedadesConvertidas)
+                    }
+                }
             } else {
                 // Si no hay propiedades, mostrar datos de ejemplo
                 cargarPropiedadesPrueba()
-
                 Log.d("HomeFragment", "No hay propiedades en la DB, mostrando datos de ejemplo")
             }
-        }
+        })
+    }
+
+    private fun mostrarPropiedades(propiedades: List<Propiedad>) {
+        if (view == null) return  // Evitar crash si el fragmento ya no está adjunto
+
+        // Actualizar el adapter con las propiedades
+        val adapter = PublicacionAdapter(propiedades)
+        recyclerView.adapter = adapter
+
+        // Mostrar RecyclerView y ocultar mensaje
+        tvNoProperties.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
+
+        Log.d("HomeFragment", "Propiedades mostradas: ${propiedades.size}")
     }
 
     private fun cargarPropiedadesPrueba() {
@@ -160,13 +229,7 @@ class HomeFragment : Fragment() {
             )
         )
 
-        // Actualizar el RecyclerView con los datos de prueba
-        val adapter = PublicacionAdapter(propiedades)
-        recyclerView.adapter = adapter
-
-        // Mostrar RecyclerView y ocultar mensaje
-        tvNoProperties.visibility = View.GONE
-        recyclerView.visibility = View.VISIBLE
+        mostrarPropiedades(propiedades)
     }
 
     companion object {

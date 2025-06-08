@@ -10,6 +10,9 @@ import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.R
 import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Propiedad
 import java.text.NumberFormat
 import java.util.Locale
+import com.bumptech.glide.Glide
+import android.util.Log
+import java.io.File
 
 class PublicacionAdapter(
     private val propiedades: List<Propiedad>
@@ -66,14 +69,56 @@ class PublicacionAdapter(
             txtBanos.text = banos
             txtTamano.text = "${propiedad.dimensiones.area} m²"
 
-            // Aquí cargaríamos la imagen usando una biblioteca como Glide o Picasso
-            // Por ejemplo:
-            // if (propiedad.imagenes.isNotEmpty()) {
-            //    Glide.with(itemView.context)
-            //        .load(propiedad.imagenes[0])
-            //        .placeholder(R.drawable.placeholder_propiedad)
-            //        .into(imgPublicacion)
-            // }
+            // Cargar imagen con Glide
+            if (propiedad.imagenes.isNotEmpty()) {
+                val imagePath = propiedad.imagenes[0]
+
+                try {
+                    if (imagePath.startsWith("http")) {
+                        // Es una URL web
+                        Glide.with(itemView.context)
+                            .load(imagePath)
+                            .placeholder(R.drawable.placeholder_home)
+                            .error(R.drawable.placeholder_home)
+                            .centerCrop()
+                            .into(imgPublicacion)
+                        Log.d("PublicacionAdapter", "Cargando imagen desde URL: $imagePath")
+                    } else {
+                        // Es una ruta de archivo local
+                        val imageFile = File(imagePath)
+                        if (imageFile.exists()) {
+                            Glide.with(itemView.context)
+                                .load(imageFile)
+                                .placeholder(R.drawable.placeholder_home)
+                                .error(R.drawable.placeholder_home)
+                                .centerCrop()
+                                .into(imgPublicacion)
+                            Log.d("PublicacionAdapter", "Cargando imagen local: $imagePath")
+                        } else {
+                            // Si el archivo no existe, usar placeholder
+                            Glide.with(itemView.context)
+                                .load(R.drawable.placeholder_home)
+                                .centerCrop()
+                                .into(imgPublicacion)
+                            Log.d("PublicacionAdapter", "Archivo local no encontrado: $imagePath")
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("PublicacionAdapter", "Error cargando imagen: ${e.message}", e)
+                    // Cargar imagen por defecto en caso de error
+                    Glide.with(itemView.context)
+                        .load(R.drawable.placeholder_home)
+                        .centerCrop()
+                        .into(imgPublicacion)
+                }
+            } else {
+                // Si no hay imágenes, usar placeholder
+                Glide.with(itemView.context)
+                    .load(R.drawable.placeholder_home)
+                    .centerCrop()
+                    .into(imgPublicacion)
+                Log.d("PublicacionAdapter", "No hay imágenes para esta propiedad")
+            }
         }
     }
 }
