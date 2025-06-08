@@ -49,9 +49,9 @@
     <string name="select_type">Seleccionar</string>
     <string name="title_new_publication">Nueva Publicación</string>
     <string name="habitaciones_publication">Habitaciones</string>
-    <string name="hint_habitaciones">Ej. 2</string>
+    <string name="hint_habitaciones">1</string>
     <string name="banos_publication">Baños</string>
-    <string name="hint_bathrooms">Ej.2</string>
+    <string name="hint_bathrooms">1</string>
     <string name="area_publication">Área (m²)</string>
     <string name="title_address">Ubicación</string>
     <string name="subtitle_address">Ingrese los detalles de la ubicación de la propiedad</string>
@@ -76,4 +76,17 @@
     <string name="empresa_contact">Empresa (opcional)</string>
     <string name="hint_company">El nombre de la empresa</string>
     <string name="btn_publish">Publicar</string>
+
+    <!-- Strings para la pantalla de detalles de propiedad -->
+    <string name="volver">Volver</string>
+    <string name="imagen_propiedad">Imagen de la propiedad</string>
+    <string name="disponible">DISPONIBLE</string>
+    <string name="ubicacion">Ubicación</string>
+    <string name="dormitorios">Dormitorios</string>
+    <string name="banos">Baños</string>
+    <string name="area">Área</string>
+    <string name="descripcion">Descripción</string>
+    <string name="caracteristicas">Características</string>
+    <string name="contacto">Información de contacto</string>
+    <string name="contactar_vendedor">Contactar vendedor</string>
 </resources>

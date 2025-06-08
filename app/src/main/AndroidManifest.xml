@@ -33,7 +33,12 @@
             android:name=".HomeActivity"
             android:exported="true">
         </activity>
+
+        <!-- Nueva actividad para detalles de propiedad -->
+        <activity
+            android:name=".PropiedadDetalleActivity"
+            android:exported="false">
+        </activity>
     </application>
 
 </manifest>
-

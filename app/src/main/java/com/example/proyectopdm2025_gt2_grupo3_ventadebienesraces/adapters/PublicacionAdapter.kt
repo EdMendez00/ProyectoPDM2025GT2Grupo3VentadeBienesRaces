@@ -1,11 +1,13 @@
 package com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.adapters
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.PropiedadDetalleActivity
 import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.R
 import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Propiedad
 import java.text.NumberFormat
@@ -13,6 +15,7 @@ import java.util.Locale
 import com.bumptech.glide.Glide
 import android.util.Log
 import java.io.File
+import java.util.ArrayList
 
 class PublicacionAdapter(
     private val propiedades: List<Propiedad>
@@ -49,22 +52,62 @@ class PublicacionAdapter(
 
             txtDireccion.text = propiedad.ubicacion.direccion
 
-            // Mostrar características específicas
-            val caracteristicas = propiedad.caracteristicas
-
-            // Buscar dormitorios y baños en las características
+            // Analizar las características para encontrar dormitorios y baños
             var dormitorios = "N/A"
             var banos = "N/A"
 
-            for (caracteristica in caracteristicas) {
-                if (caracteristica.contains("dormitorio", ignoreCase = true)) {
+            // Revisar todas las características para encontrar patrones
+            for (caracteristica in propiedad.caracteristicas) {
+                // Buscar patrones para dormitorios/habitaciones
+                if (caracteristica.contains("dormitorio", ignoreCase = true) ||
+                    caracteristica.contains("habitacion", ignoreCase = true) ||
+                    caracteristica.contains("habitación", ignoreCase = true) ||
+                    caracteristica.contains("dorm", ignoreCase = true) ||
+                    caracteristica.matches(Regex("\\d+\\s*dormitorio.*", RegexOption.IGNORE_CASE)) ||
+                    caracteristica.matches(Regex("\\d+\\s*hab.*", RegexOption.IGNORE_CASE))) {
                     dormitorios = caracteristica
+                    continue
                 }
-                if (caracteristica.contains("baño", ignoreCase = true)) {
+
+                // Si hay un número simple que podría ser número de dormitorios
+                if (dormitorios == "N/A" && caracteristica.trim().matches(Regex("\\d+"))) {
+                    // Si es el primer número que encontramos, asumimos dormitorios
+                    if (banos == "N/A") {
+                        dormitorios = "${caracteristica.trim()} dormitorios"
+                        continue
+                    }
+                }
+
+                // Buscar patrones para baños
+                if (caracteristica.contains("baño", ignoreCase = true) ||
+                    caracteristica.contains("bano", ignoreCase = true) ||
+                    caracteristica.contains("bath", ignoreCase = true) ||
+                    caracteristica.matches(Regex("\\d+\\s*baño.*", RegexOption.IGNORE_CASE)) ||
+                    caracteristica.matches(Regex("\\d+\\s*ban.*", RegexOption.IGNORE_CASE))) {
                     banos = caracteristica
+                    continue
                 }
             }
 
+            // Última alternativa: buscar en la descripción
+            if (dormitorios == "N/A" || banos == "N/A") {
+                // Buscar patrones como "3 dormitorios, 2 baños" en la descripción
+                val dormitoriosPattern = Regex("(\\d+)\\s*(?:dormitorio|habitación|habitacion|dorm|hab)s?", RegexOption.IGNORE_CASE)
+                val banosPattern = Regex("(\\d+)\\s*(?:baño|bano|bath)s?", RegexOption.IGNORE_CASE)
+
+                val dormitoriosMatch = dormitoriosPattern.find(propiedad.descripcion)
+                val banosMatch = banosPattern.find(propiedad.descripcion)
+
+                if (dormitoriosMatch != null && dormitorios == "N/A") {
+                    dormitorios = "${dormitoriosMatch.groupValues[1]} dormitorios"
+                }
+
+                if (banosMatch != null && banos == "N/A") {
+                    banos = "${banosMatch.groupValues[1]} baños"
+                }
+            }
+
+            // Asignar los valores encontrados
             txtDormitorios.text = dormitorios
             txtBanos.text = banos
             txtTamano.text = "${propiedad.dimensiones.area} m²"
@@ -118,6 +161,35 @@ class PublicacionAdapter(
                     .centerCrop()
                     .into(imgPublicacion)
                 Log.d("PublicacionAdapter", "No hay imágenes para esta propiedad")
+            }
+
+            // Configurar OnClickListener para toda la vista del elemento
+            itemView.setOnClickListener {
+                // Crear intent para la actividad de detalle
+                val intent = Intent(itemView.context, PropiedadDetalleActivity::class.java).apply {
+                    // Pasar todos los datos necesarios
+                    putExtra("PROPIEDAD_ID", propiedad.id)
+                    putExtra("PROPIEDAD_TITULO", propiedad.titulo)
+                    putExtra("PROPIEDAD_DESCRIPCION", propiedad.descripcion)
+                    putExtra("PROPIEDAD_PRECIO", propiedad.precio)
+                    putExtra("PROPIEDAD_DIRECCION", propiedad.ubicacion.direccion)
+                    putExtra("PROPIEDAD_AREA", propiedad.dimensiones.area)
+                    putExtra("PROPIEDAD_HABITACIONES", dormitorios)
+                    putExtra("PROPIEDAD_BANOS", banos)
+                    putExtra("PROPIEDAD_ESTADO", propiedad.estado)
+                    putExtra("PROPIEDAD_CONTACTO", propiedad.medioContacto)
+
+                    // Pasar imagen principal si existe
+                    if (propiedad.imagenes.isNotEmpty()) {
+                        putExtra("PROPIEDAD_IMAGEN", propiedad.imagenes[0])
+                    }
+
+                    // Pasar todas las características como ArrayList
+                    putStringArrayListExtra("PROPIEDAD_CARACTERISTICAS", ArrayList(propiedad.caracteristicas))
+                }
+
+                // Iniciar la actividad
+                itemView.context.startActivity(intent)
             }
         }
     }
