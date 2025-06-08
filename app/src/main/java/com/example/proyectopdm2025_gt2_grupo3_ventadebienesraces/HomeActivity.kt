@@ -33,12 +33,44 @@ class HomeActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_home)
 
-        // Implementación de carga de fragmentos en la actividad principal
-        if (savedInstanceState == null) {
+        val navigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
+        // Procesar el extra FRAGMENT_TO_SHOW si existe
+        val fragmentToShow = intent.getStringExtra("FRAGMENT_TO_SHOW")
+        if (fragmentToShow != null) {
+            when (fragmentToShow) {
+                "home" -> {
+                    loadFragment(homeFragment)
+                    navigation.selectedItemId = R.id.homeFragment
+                }
+                "search" -> {
+                    loadFragment(searchFragment)
+                    navigation.selectedItemId = R.id.searchFragment
+                }
+                "add" -> {
+                    loadFragment(addFragment)
+                    navigation.selectedItemId = R.id.addFragment
+                }
+                "favorites" -> {
+                    loadFragment(favoriteFragment)
+                    navigation.selectedItemId = R.id.favoriteFragment
+                }
+                "profile" -> {
+                    loadFragment(profileFragment)
+                    navigation.selectedItemId = R.id.profileFragment
+                }
+                else -> {
+                    // Si no hay un fragmento específico o es desconocido, cargar el fragmento de inicio
+                    loadFragment(homeFragment)
+                    navigation.selectedItemId = R.id.homeFragment
+                }
+            }
+        } else if (savedInstanceState == null) {
+            // Si no hay estado guardado ni fragmento específico, cargar el fragmento de inicio
             loadFragment(homeFragment)
+            navigation.selectedItemId = R.id.homeFragment
         }
 
-        val navigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         navigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.homeFragment -> loadFragment(homeFragment)
@@ -49,8 +81,6 @@ class HomeActivity : AppCompatActivity() {
             }
             true
         }
-
-        navigation.selectedItemId = R.id.homeFragment
     }
 
     private fun loadFragment(fragment: Fragment) {
@@ -81,4 +111,3 @@ class HomeActivity : AppCompatActivity() {
         finish()
     }
 }
-

@@ -7,11 +7,11 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import com.bumptech.glide.Glide
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 import java.io.File
 import java.text.NumberFormat
@@ -19,9 +19,9 @@ import java.util.Locale
 
 class PropiedadDetalleActivity : AppCompatActivity() {
 
-    private lateinit var cardDetalles: CardView
-    private lateinit var cardCaracteristicas: CardView
-    private lateinit var cardContacto: CardView
+    private lateinit var layoutDetalles: LinearLayout
+    private lateinit var layoutCaracteristicas: LinearLayout
+    private lateinit var layoutContacto: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,25 +48,65 @@ class PropiedadDetalleActivity : AppCompatActivity() {
         val imgPropiedad = findViewById<ImageView>(R.id.imgPropiedad)
         val tvTitulo = findViewById<TextView>(R.id.tvTitulo)
         val tvPrecio = findViewById<TextView>(R.id.tvPrecio)
-        val tvEstado = findViewById<TextView>(R.id.tvEstado)
         val tvUbicacion = findViewById<TextView>(R.id.tvUbicacion)
         val tvDescripcion = findViewById<TextView>(R.id.tvDescripcion)
         val tvDormitorios = findViewById<TextView>(R.id.tvDormitorios)
         val tvBanos = findViewById<TextView>(R.id.tvBanos)
         val tvArea = findViewById<TextView>(R.id.tvArea)
-        val tvCaracteristicas = findViewById<TextView>(R.id.tvCaracteristicas)
-        val tvContacto = findViewById<TextView>(R.id.tvContacto)
-        val btnContactar = findViewById<FloatingActionButton>(R.id.btnContactar)
         val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
+        val tvEstado = findViewById<TextView>(R.id.tvEstado)
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
 
-        // Referencias a las cards de cada sección
-        cardDetalles = findViewById(R.id.cardDetalles)
-        cardCaracteristicas = findViewById(R.id.cardCaracteristicas)
-        cardContacto = findViewById(R.id.cardContacto)
+        // Referencias a los layouts de cada sección
+        layoutDetalles = findViewById(R.id.layoutDetalles)
+        layoutCaracteristicas = findViewById(R.id.layoutCaracteristicas)
+        layoutContacto = findViewById(R.id.layoutContacto)
 
         // Configurar el botón de retroceso
         btnBack.setOnClickListener {
             finish()
+        }
+
+        // Configurar la barra de navegación inferior
+        bottomNavigation.setOnItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.homeFragment -> {
+                    // Ir a la pantalla de inicio
+                    val intent = Intent(this, HomeActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                    true
+                }
+                R.id.searchFragment -> {
+                    // Ir a la pantalla de búsqueda
+                    val intent = Intent(this, HomeActivity::class.java)
+                    intent.putExtra("FRAGMENT_TO_SHOW", "search")
+                    startActivity(intent)
+                    true
+                }
+                R.id.addFragment -> {
+                    // Ir a pantalla de agregar propiedad
+                    val intent = Intent(this, HomeActivity::class.java)
+                    intent.putExtra("FRAGMENT_TO_SHOW", "add")
+                    startActivity(intent)
+                    true
+                }
+                R.id.favoriteFragment -> {
+                    // Ir a favoritos
+                    val intent = Intent(this, HomeActivity::class.java)
+                    intent.putExtra("FRAGMENT_TO_SHOW", "favorites")
+                    startActivity(intent)
+                    true
+                }
+                R.id.profileFragment -> {
+                    // Ir al perfil
+                    val intent = Intent(this, HomeActivity::class.java)
+                    intent.putExtra("FRAGMENT_TO_SHOW", "profile")
+                    startActivity(intent)
+                    true
+                }
+                else -> false
+            }
         }
 
         // Configurar el TabLayout
@@ -83,6 +123,7 @@ class PropiedadDetalleActivity : AppCompatActivity() {
         // Mostrar la información de la propiedad
         tvTitulo.text = titulo
         tvDescripcion.text = descripcion
+        tvEstado.text = estado
 
         // Formatear precio
         val formatoMoneda = NumberFormat.getCurrencyInstance(Locale("es", "SV"))
@@ -93,19 +134,11 @@ class PropiedadDetalleActivity : AppCompatActivity() {
         tvBanos.text = banos
         tvArea.text = "$area m²"
 
-        // Configurar estado
-        tvEstado.text = estado
-        tvEstado.setBackgroundResource(
-            if (estado == "DISPONIBLE") R.drawable.rounded_status_background
-            else android.R.color.holo_red_light
-        )
-
-        // Mostrar características como lista con viñetas
-        val caracteristicasTexto = caracteristicas.joinToString("\n") { "• $it" }
-        tvCaracteristicas.text = caracteristicasTexto
-
-        // Mostrar información de contacto
-        tvContacto.text = contacto
+        // Agregar las características dinámicamente a la sección de características
+        if (caracteristicas.isNotEmpty()) {
+            // Aquí podrías agregar código para añadir características dinámicamente a la sección
+            // utilizando el patrón de diseño que tienes en tu XML
+        }
 
         // Cargar imagen con Glide
         if (imageUrl.isNotEmpty()) {
@@ -151,47 +184,21 @@ class PropiedadDetalleActivity : AppCompatActivity() {
                 .into(imgPropiedad)
         }
 
-        // Configurar botón de contacto
-        btnContactar.setOnClickListener {
-            // Intentar extraer un número telefónico del texto de contacto
-            val phoneRegex = Regex("\\d{4}[-\\s]?\\d{4}")
-            val phoneMatch = phoneRegex.find(contacto)
-
-            if (phoneMatch != null) {
-                // Si se encontró un teléfono, iniciar intent para llamar
-                val phoneNumber = phoneMatch.value.replace("-", "").replace(" ", "")
-                val dialIntent = Intent(Intent.ACTION_DIAL)
-                dialIntent.data = Uri.parse("tel:$phoneNumber")
-
-                if (dialIntent.resolveActivity(packageManager) != null) {
-                    startActivity(dialIntent)
-                }
-            } else {
-                // Si no se encontró teléfono, mostrar el contacto completo
-                val sharingIntent = Intent(Intent.ACTION_SEND)
-                sharingIntent.type = "text/plain"
-                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Contacto para: $titulo")
-                sharingIntent.putExtra(Intent.EXTRA_TEXT, contacto)
-
-                startActivity(Intent.createChooser(sharingIntent, "Contactar mediante"))
-            }
-        }
-
         // Por defecto, mostrar la sección de detalles
         mostrarSeccion(0)
     }
 
     private fun mostrarSeccion(position: Int) {
         // Ocultar todas las secciones
-        cardDetalles.visibility = View.GONE
-        cardCaracteristicas.visibility = View.GONE
-        cardContacto.visibility = View.GONE
+        layoutDetalles.visibility = View.GONE
+        layoutCaracteristicas.visibility = View.GONE
+        layoutContacto.visibility = View.GONE
 
         // Mostrar la sección seleccionada
         when (position) {
-            0 -> cardDetalles.visibility = View.VISIBLE
-            1 -> cardCaracteristicas.visibility = View.VISIBLE
-            2 -> cardContacto.visibility = View.VISIBLE
+            0 -> layoutDetalles.visibility = View.VISIBLE
+            1 -> layoutCaracteristicas.visibility = View.VISIBLE
+            2 -> layoutContacto.visibility = View.VISIBLE
         }
     }
 }

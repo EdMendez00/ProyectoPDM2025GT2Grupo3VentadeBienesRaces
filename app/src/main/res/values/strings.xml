@@ -80,18 +80,26 @@
     <!-- Strings para la pantalla de detalles de propiedad -->
     <string name="volver">Volver</string>
     <string name="imagen_propiedad">Imagen de la propiedad</string>
-    <string name="disponible">DISPONIBLE</string>
+    <string name="disponible">Disponible</string>
     <string name="ubicacion">Ubicación</string>
     <string name="dormitorios">Dormitorios</string>
     <string name="banos">Baños</string>
     <string name="area">Área</string>
     <string name="descripcion">Descripción</string>
     <string name="caracteristicas">Características</string>
-    <string name="contacto">Información de contacto</string>
+    <string name="contacto">Contacto</string>
     <string name="contactar_vendedor">Contactar vendedor</string>
 
     <!-- Strings adicionales para la pantalla de detalles -->
     <string name="detalles_propiedad">Detalles de Propiedad</string>
     <string name="detalles">Detalles</string>
     <string name="ver_mapa">Ver en mapa</string>
+
+    <!-- Strings para activity_detalle_propiedad.xml -->
+    <string name="anterior">Anterior</string>
+    <string name="siguiente">Siguiente</string>
+    <string name="perfil">Perfil</string>
+    <string name="caracteristica">Característica</string>
+    <string name="llamar">Llamar</string>
+    <string name="agendar">Agendar</string>
 </resources>
