@@ -9,13 +9,19 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import com.bumptech.glide.Glide
-import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Propiedad
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
 import java.io.File
 import java.text.NumberFormat
 import java.util.Locale
 
 class PropiedadDetalleActivity : AppCompatActivity() {
+
+    private lateinit var cardDetalles: CardView
+    private lateinit var cardCaracteristicas: CardView
+    private lateinit var cardContacto: CardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,12 +56,29 @@ class PropiedadDetalleActivity : AppCompatActivity() {
         val tvArea = findViewById<TextView>(R.id.tvArea)
         val tvCaracteristicas = findViewById<TextView>(R.id.tvCaracteristicas)
         val tvContacto = findViewById<TextView>(R.id.tvContacto)
-        val btnContactar = findViewById<Button>(R.id.btnContactar)
+        val btnContactar = findViewById<FloatingActionButton>(R.id.btnContactar)
+        val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
+
+        // Referencias a las cards de cada sección
+        cardDetalles = findViewById(R.id.cardDetalles)
+        cardCaracteristicas = findViewById(R.id.cardCaracteristicas)
+        cardContacto = findViewById(R.id.cardContacto)
 
         // Configurar el botón de retroceso
         btnBack.setOnClickListener {
             finish()
         }
+
+        // Configurar el TabLayout
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                mostrarSeccion(tab.position)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
 
         // Mostrar la información de la propiedad
         tvTitulo.text = titulo
@@ -73,11 +96,11 @@ class PropiedadDetalleActivity : AppCompatActivity() {
         // Configurar estado
         tvEstado.text = estado
         tvEstado.setBackgroundResource(
-            if (estado == "DISPONIBLE") android.R.color.holo_green_dark
+            if (estado == "DISPONIBLE") R.drawable.rounded_status_background
             else android.R.color.holo_red_light
         )
 
-        // Mostrar características como lista
+        // Mostrar características como lista con viñetas
         val caracteristicasTexto = caracteristicas.joinToString("\n") { "• $it" }
         tvCaracteristicas.text = caracteristicasTexto
 
@@ -128,7 +151,7 @@ class PropiedadDetalleActivity : AppCompatActivity() {
                 .into(imgPropiedad)
         }
 
-        // Configurar botón de contactar (extraer número de teléfono del contacto)
+        // Configurar botón de contacto
         btnContactar.setOnClickListener {
             // Intentar extraer un número telefónico del texto de contacto
             val phoneRegex = Regex("\\d{4}[-\\s]?\\d{4}")
@@ -152,6 +175,23 @@ class PropiedadDetalleActivity : AppCompatActivity() {
 
                 startActivity(Intent.createChooser(sharingIntent, "Contactar mediante"))
             }
+        }
+
+        // Por defecto, mostrar la sección de detalles
+        mostrarSeccion(0)
+    }
+
+    private fun mostrarSeccion(position: Int) {
+        // Ocultar todas las secciones
+        cardDetalles.visibility = View.GONE
+        cardCaracteristicas.visibility = View.GONE
+        cardContacto.visibility = View.GONE
+
+        // Mostrar la sección seleccionada
+        when (position) {
+            0 -> cardDetalles.visibility = View.VISIBLE
+            1 -> cardCaracteristicas.visibility = View.VISIBLE
+            2 -> cardContacto.visibility = View.VISIBLE
         }
     }
 }

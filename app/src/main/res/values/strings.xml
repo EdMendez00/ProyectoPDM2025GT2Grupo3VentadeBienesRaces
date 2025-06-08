@@ -89,4 +89,9 @@
     <string name="caracteristicas">Características</string>
     <string name="contacto">Información de contacto</string>
     <string name="contactar_vendedor">Contactar vendedor</string>
+
+    <!-- Strings adicionales para la pantalla de detalles -->
+    <string name="detalles_propiedad">Detalles de Propiedad</string>
+    <string name="detalles">Detalles</string>
+    <string name="ver_mapa">Ver en mapa</string>
 </resources>
