@@ -17,6 +17,9 @@ data class PropiedadEntity(
     val largo: Double,
     val ancho: Double,
     val area: Double,
+    val tipoPropiedad: String, // Añadido: tipo de propiedad (Casa, Apartamento, etc.)
+    val dormitorios: Int, // Añadido: número de dormitorios
+    val banos: Int, // Añadido: número de baños
     val caracteristicas: String,  // Lista separada por comas
     val vendedorId: String,
     val fechaPublicacion: Date,

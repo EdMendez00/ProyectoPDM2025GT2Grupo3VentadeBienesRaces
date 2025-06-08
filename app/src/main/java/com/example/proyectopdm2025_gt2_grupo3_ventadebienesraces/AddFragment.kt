@@ -638,6 +638,18 @@ class AddFragment : Fragment() {
             } catch (e: Exception) {
                 0.0
             }
+            // Recolectar valores para los nuevos campos
+            val tipoPropiedad = actvPropertyType.text?.toString() ?: ""
+            val dormitorios = try {
+                etBedrooms.text?.toString()?.toIntOrNull() ?: 0
+            } catch (e: Exception) {
+                0
+            }
+            val banos = try {
+                etBathrooms.text?.toString()?.toIntOrNull() ?: 0
+            } catch (e: Exception) {
+                0
+            }
             val contactName = etContactName.text?.toString()?.trim() ?: ""
             val phone = etPhoneNumber.text?.toString()?.trim() ?: ""
             val email = etEmail.text?.toString()?.trim() ?: ""
@@ -656,7 +668,7 @@ class AddFragment : Fragment() {
                 }
             }.toString()
 
-            // Crear objeto PropiedadEntity de forma segura
+            // Crear objeto PropiedadEntity de forma segura con los nuevos campos
             val propiedad = PropiedadEntity(
                 titulo = titulo,
                 descripcion = descripcion,
@@ -667,6 +679,9 @@ class AddFragment : Fragment() {
                 largo = 0.0,
                 ancho = 0.0,
                 area = area,
+                tipoPropiedad = tipoPropiedad, // Nuevo campo
+                dormitorios = dormitorios,     // Nuevo campo
+                banos = banos,                 // Nuevo campo
                 caracteristicas = features.joinToString(","),
                 vendedorId = vendedorId,
                 fechaPublicacion = Date(),
