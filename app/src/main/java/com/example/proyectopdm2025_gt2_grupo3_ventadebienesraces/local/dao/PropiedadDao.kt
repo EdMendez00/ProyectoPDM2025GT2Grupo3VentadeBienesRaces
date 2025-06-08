@@ -29,13 +29,13 @@ interface PropiedadDao {
     @Update
     suspend fun updatePropiedad(propiedad: PropiedadEntity)
 
-    @Query("UPDATE propiedades SET estado = 'VENDIDA' WHERE id = :propiedadId")
-    suspend fun marcarComoVendida(propiedadId: Long)
-
     @Delete
     suspend fun deletePropiedad(propiedad: PropiedadEntity)
 
-    @Query("SELECT * FROM propiedades WHERE titulo LIKE '%' || :query || '%' AND estado = 'DISPONIBLE'")
+    @Query("UPDATE propiedades SET estado = 'VENDIDA' WHERE id = :propiedadId")
+    suspend fun marcarComoVendida(propiedadId: Long)
+
+    @Query("SELECT * FROM propiedades WHERE titulo LIKE '%' || :query || '%' OR descripcion LIKE '%' || :query || '%'")
     fun searchPropiedades(query: String): LiveData<List<PropiedadEntity>>
 
     @Query("SELECT * FROM propiedades WHERE precio BETWEEN :minPrecio AND :maxPrecio AND estado = 'DISPONIBLE'")

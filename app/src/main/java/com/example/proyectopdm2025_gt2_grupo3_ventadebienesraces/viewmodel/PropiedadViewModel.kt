@@ -16,20 +16,18 @@ class PropiedadViewModel(application: Application) : AndroidViewModel(applicatio
     private val propiedadDao: PropiedadDao
     private val imagenPropiedadDao: ImagenPropiedadDao
 
+    // Exponemos directamente las propiedades disponibles como LiveData
+    val propiedadesDisponibles: LiveData<List<PropiedadEntity>>
+    val propiedadesVendidas: LiveData<List<PropiedadEntity>>
+
     init {
         val database = AppDatabase.getDatabase(application)
         propiedadDao = database.propiedadDao()
         imagenPropiedadDao = database.imagenPropiedadDao()
-    }
 
-    // Propiedades disponibles
-    fun getPropiedadesDisponibles(): LiveData<List<PropiedadEntity>> {
-        return propiedadDao.getPropiedadesDisponibles()
-    }
-
-    // Propiedades vendidas
-    fun getPropiedadesVendidas(): LiveData<List<PropiedadEntity>> {
-        return propiedadDao.getPropiedadesVendidas()
+        // Inicializamos las propiedades LiveData
+        propiedadesDisponibles = propiedadDao.getPropiedadesDisponibles()
+        propiedadesVendidas = propiedadDao.getPropiedadesVendidas()
     }
 
     // Propiedades de un vendedor específico

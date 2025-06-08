@@ -5,35 +5,23 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.adapters.PublicacionAdapter
 import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Dimensiones
 import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Propiedad
 import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Ubicacion
+import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.viewmodel.PropiedadViewModel
+import android.widget.TextView
+import android.util.Log
+import java.util.Date
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var propiedadViewModel: PropiedadViewModel
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var tvNoProperties: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,10 +33,89 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.rvPublicaciones)
+
+        // Inicializar ViewModel
+        propiedadViewModel = ViewModelProvider(this).get(PropiedadViewModel::class.java)
+
+        // Configurar RecyclerView
+        recyclerView = view.findViewById<RecyclerView>(R.id.rvPublicaciones)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        val publicaciones = listOf(
+
+        // Mensaje cuando no hay propiedades
+        tvNoProperties = view.findViewById(R.id.tvNoProperties)
+
+        // Inicialmente, mostrar mensaje de carga
+        mostrarMensajeCarga()
+
+        // Observar propiedades de la base de datos - ESTA ES LA PARTE PRINCIPAL
+        observarPropiedadesBaseDeDatos()
+    }
+
+    private fun mostrarMensajeCarga() {
+        tvNoProperties.text = "Cargando propiedades..."
+        tvNoProperties.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+    }
+
+    private fun observarPropiedadesBaseDeDatos() {
+        // Observar cambios en las propiedades disponibles desde la base de datos
+        propiedadViewModel.propiedadesDisponibles.observe(viewLifecycleOwner) { propiedadesEntity ->
+            Log.d("HomeFragment", "Propiedades obtenidas desde DB: ${propiedadesEntity.size}")
+
+            if (propiedadesEntity.isNotEmpty()) {
+                // Convertir PropiedadEntity a Propiedad (modelo para la UI)
+                val propiedades = propiedadesEntity.map { entity ->
+                    Propiedad(
+                        id = entity.id.toString(), // Convertir Long a String
+                        titulo = entity.titulo,
+                        descripcion = entity.descripcion,
+                        precio = entity.precio,
+                        ubicacion = Ubicacion(
+                            direccion = entity.direccion,
+                            latitud = entity.latitud,
+                            longitud = entity.longitud
+                        ),
+                        dimensiones = Dimensiones(
+                            largo = entity.largo,
+                            ancho = entity.ancho,
+                            area = entity.area
+                        ),
+                        // Convertir string separado por comas a lista
+                        caracteristicas = entity.caracteristicas
+                            .split(",")
+                            .filter { it.isNotEmpty() },
+                        // Por ahora, no tenemos imágenes
+                        imagenes = emptyList(),
+                        estado = entity.estado,
+                        medioContacto = entity.medioContacto,
+                        vendedorId = entity.vendedorId,
+                        fechaPublicacion = entity.fechaPublicacion
+                    )
+                }
+
+                // Actualizar el adapter con las propiedades convertidas
+                val adapter = PublicacionAdapter(propiedades)
+                recyclerView.adapter = adapter
+
+                // Mostrar RecyclerView y ocultar mensaje
+                tvNoProperties.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
+
+                Log.d("HomeFragment", "Propiedades mostradas: ${propiedades.size}")
+            } else {
+                // Si no hay propiedades, mostrar datos de ejemplo
+                cargarPropiedadesPrueba()
+
+                Log.d("HomeFragment", "No hay propiedades en la DB, mostrando datos de ejemplo")
+            }
+        }
+    }
+
+    private fun cargarPropiedadesPrueba() {
+        // Datos de prueba para mostrar mientras se implementa la base de datos
+        val propiedades = listOf(
             Propiedad(
+                id = "1",
                 titulo = "Casa Moderna en Ciudad",
                 descripcion = "Casa moderna con acabados de lujo y excelente ubicación.",
                 precio = 150000.0,
@@ -63,11 +130,14 @@ class HomeFragment : Fragment() {
                     area = 250.0
                 ),
                 caracteristicas = listOf("3 dormitorios", "2 baños", "Cocina integral", "Jardín"),
-                imagenes = listOf("https://images.unsplash.com/photo-1678895223308-da40c609e39b?q=80&w=1888&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"),
+                imagenes = listOf("https://images.unsplash.com/photo-1678895223308-da40c609e39b"),
                 estado = "DISPONIBLE",
-                medioContacto = "Tel: 2222-3333"
+                medioContacto = "Tel: 2222-3333",
+                vendedorId = "user123",
+                fechaPublicacion = Date()
             ),
             Propiedad(
+                id = "2",
                 titulo = "Apartamento de Lujo",
                 descripcion = "Apartamento con vista panorámica y amenidades exclusivas.",
                 precio = 120000.0,
@@ -82,50 +152,25 @@ class HomeFragment : Fragment() {
                     area = 120.0
                 ),
                 caracteristicas = listOf("2 dormitorios", "2 baños", "Piscina", "Gimnasio"),
-                imagenes = listOf("https://images.unsplash.com/photo-1748050868829-74a5a43f79c6?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"),
+                imagenes = listOf("https://images.unsplash.com/photo-1748050868829-74a5a43f79c6"),
                 estado = "DISPONIBLE",
-                medioContacto = "Tel: 5555-6666"
-            ),
-            Propiedad(
-                titulo = "Residencia Familiar",
-                descripcion = "Amplia residencia ideal para familias grandes.",
-                precio = 200000.0,
-                ubicacion = Ubicacion(
-                    direccion = "Calle El Mirador, Km 10, La Libertad",
-                    latitud = 13.4883,
-                    longitud = -89.3226
-                ),
-                dimensiones = Dimensiones(
-                    largo = 35.0,
-                    ancho = 10.0,
-                    area = 350.0
-                ),
-                caracteristicas = listOf("4 dormitorios", "3 baños", "Terraza", "Cochera"),
-                imagenes = listOf("https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd"),
-                estado = "DISPONIBLE",
-                medioContacto = "Tel: 7777-8888"
+                medioContacto = "Tel: 5555-6666",
+                vendedorId = "user456",
+                fechaPublicacion = Date()
             )
         )
-        recyclerView.adapter = PublicacionAdapter(publicaciones)
+
+        // Actualizar el RecyclerView con los datos de prueba
+        val adapter = PublicacionAdapter(propiedades)
+        recyclerView.adapter = adapter
+
+        // Mostrar RecyclerView y ocultar mensaje
+        tvNoProperties.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        fun newInstance() = HomeFragment()
     }
 }

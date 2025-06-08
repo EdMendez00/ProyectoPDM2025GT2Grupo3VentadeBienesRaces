@@ -2,6 +2,7 @@ package com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.local.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -13,11 +14,12 @@ import androidx.room.PrimaryKey
             childColumns = ["propiedadId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index("propiedadId")]
 )
 data class ImagenPropiedadEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val propiedadId: Long,
-    val rutaImagen: String  // Ruta local de la imagen almacenada
+    val rutaImagen: String
 )

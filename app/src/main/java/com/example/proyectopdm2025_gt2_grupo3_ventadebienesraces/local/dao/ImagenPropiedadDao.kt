@@ -14,10 +14,7 @@ interface ImagenPropiedadDao {
     fun getImagenesByPropiedad(propiedadId: Long): LiveData<List<ImagenPropiedadEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertImagen(imagen: ImagenPropiedadEntity)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertImagenes(imagenes: List<ImagenPropiedadEntity>)
+    suspend fun insertImagen(imagen: ImagenPropiedadEntity): Long
 
     @Delete
     suspend fun deleteImagen(imagen: ImagenPropiedadEntity)

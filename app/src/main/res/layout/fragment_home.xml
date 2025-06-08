@@ -131,6 +131,17 @@
                             android:textSize="17sp"/>
                     </LinearLayout>
 
+                    <!-- Mensaje cuando no hay propiedades -->
+                    <TextView
+                        android:id="@+id/tvNoProperties"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No hay propiedades disponibles en este momento"
+                        android:textAlignment="center"
+                        android:padding="16dp"
+                        android:textColor="@color/gray_text"
+                        android:visibility="gone" />
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvPublicaciones"
                         android:layout_width="match_parent"
