@@ -102,4 +102,5 @@
     <string name="caracteristica">Característica</string>
     <string name="llamar">Llamar</string>
     <string name="agendar">Agendar</string>
+    <string name="title_agendar_visita">Agendar Visita</string>
 </resources>
