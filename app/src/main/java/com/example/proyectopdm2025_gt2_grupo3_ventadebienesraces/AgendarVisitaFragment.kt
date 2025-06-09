@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 
 class AgendarVisitaFragment : Fragment() {
 
@@ -29,5 +31,13 @@ class AgendarVisitaFragment : Fragment() {
         tvTitleAdd.text = nombreDepartamento
         tvDirection.text = direccion
         tvInfo.text = "Programe una cita con $nombreVendedor"
+
+        // Horas disponibles de prueba para el vendedor
+        val horasDisponibles = listOf(
+            "09:00 AM", "10:00 AM", "11:00 AM", "02:00 PM", "03:00 PM", "04:00 PM"
+        )
+        val actvHoraComprador = view.findViewById<AutoCompleteTextView>(R.id.actvHoraComprador)
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, horasDisponibles)
+        actvHoraComprador.setAdapter(adapter)
     }
 }
