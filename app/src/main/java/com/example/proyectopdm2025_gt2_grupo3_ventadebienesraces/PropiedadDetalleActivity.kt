@@ -242,6 +242,18 @@ class PropiedadDetalleActivity : AppCompatActivity() {
             }
         }
 
+        // Acción para el botón Agendar Visita
+        val btnAgendarVisita = findViewById<LinearLayout>(R.id.btnAgendarVisita)
+        btnAgendarVisita.setOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java)
+            intent.putExtra("FRAGMENT_TO_SHOW", "agendar_visita")
+            intent.putExtra("NOMBRE_DEPARTAMENTO", titulo)
+            intent.putExtra("DIRECCION", direccion)
+            intent.putExtra("NOMBRE_VENDEDOR", nombreVendedor)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
+        }
+
         // Por defecto, mostrar la sección de detalles
         mostrarSeccion(0)
     }

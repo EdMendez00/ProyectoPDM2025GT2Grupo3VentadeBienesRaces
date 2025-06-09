@@ -59,6 +59,15 @@ class HomeActivity : AppCompatActivity() {
                     loadFragment(profileFragment)
                     navigation.selectedItemId = R.id.profileFragment
                 }
+                "agendar_visita" -> {
+                    val agendarVisitaFragment = AgendarVisitaFragment()
+                    val args = Bundle()
+                    args.putString("NOMBRE_DEPARTAMENTO", intent.getStringExtra("NOMBRE_DEPARTAMENTO"))
+                    args.putString("DIRECCION", intent.getStringExtra("DIRECCION"))
+                    args.putString("NOMBRE_VENDEDOR", intent.getStringExtra("NOMBRE_VENDEDOR"))
+                    agendarVisitaFragment.arguments = args
+                    loadFragment(agendarVisitaFragment)
+                }
                 else -> {
                     // Si no hay un fragmento específico o es desconocido, cargar el fragmento de inicio
                     loadFragment(homeFragment)
