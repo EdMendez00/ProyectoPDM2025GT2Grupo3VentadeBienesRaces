@@ -9,6 +9,9 @@ import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.local.dao.Image
 import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.local.dao.PropiedadDao
 import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.local.entity.ImagenPropiedadEntity
 import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.local.entity.PropiedadEntity
+import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Propiedad
+import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Ubicacion
+import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Dimensiones
 import kotlinx.coroutines.launch
 
 class PropiedadViewModel(application: Application) : AndroidViewModel(application) {
@@ -109,4 +112,33 @@ class PropiedadViewModel(application: Application) : AndroidViewModel(applicatio
     suspend fun getImagenesCount(propiedadId: Long): Int {
         return imagenPropiedadDao.getImagenesCount(propiedadId)
     }
+}
+
+// --- FUNCIÓN DE EXTENSIÓN GLOBAL ---
+
+fun com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.local.entity.PropiedadEntity.toPropiedad(): com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Propiedad {
+    return com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Propiedad(
+        id = this.id.toString(),
+        titulo = this.titulo,
+        descripcion = this.descripcion,
+        precio = this.precio,
+        ubicacion = com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Ubicacion(
+            direccion = this.direccion,
+            latitud = this.latitud,
+            longitud = this.longitud
+        ),
+        dimensiones = com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Dimensiones(
+            largo = this.largo,
+            ancho = this.ancho,
+            area = this.area
+        ),
+        caracteristicas = if (this.caracteristicas.isNotEmpty()) this.caracteristicas.split(",") else listOf(),
+        imagenes = listOf(),
+        estado = this.estado,
+        medioContacto = this.medioContacto,
+        vendedorId = this.vendedorId,
+        fechaPublicacion = this.fechaPublicacion,
+        dormitorios = this.dormitorios,
+        banos = this.banos
+    )
 }

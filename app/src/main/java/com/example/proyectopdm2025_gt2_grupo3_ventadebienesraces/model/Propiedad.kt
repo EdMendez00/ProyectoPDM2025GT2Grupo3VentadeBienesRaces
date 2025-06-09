@@ -19,7 +19,9 @@ data class Propiedad(
     val estado: String = "DISPONIBLE",
     val medioContacto: String = "",
     val vendedorId: String = "",
-    val fechaPublicacion: Date = Date()
+    val fechaPublicacion: Date = Date(),
+    val dormitorios: Int = 0,
+    val banos: Int = 0
 )
 
 @IgnoreExtraProperties

@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
 import java.util.concurrent.atomic.AtomicInteger
+import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.viewmodel.toPropiedad
 
 class HomeFragment : Fragment() {
 
@@ -75,29 +76,8 @@ class HomeFragment : Fragment() {
 
                 // Procesar cada propiedad
                 for (entity in propiedadesEntity) {
-                    // Primero, convertir la propiedad básica
-                    val propiedadConvertida = Propiedad(
-                        id = entity.id.toString(),
-                        titulo = entity.titulo,
-                        descripcion = entity.descripcion,
-                        precio = entity.precio,
-                        ubicacion = Ubicacion(
-                            direccion = entity.direccion,
-                            latitud = entity.latitud,
-                            longitud = entity.longitud
-                        ),
-                        dimensiones = Dimensiones(
-                            largo = entity.largo,
-                            ancho = entity.ancho,
-                            area = entity.area
-                        ),
-                        caracteristicas = entity.caracteristicas.split(",").filter { it.isNotEmpty() },
-                        imagenes = emptyList(), // Inicialmente vacío, lo llenaremos después
-                        estado = entity.estado,
-                        medioContacto = entity.medioContacto,
-                        vendedorId = entity.vendedorId,
-                        fechaPublicacion = entity.fechaPublicacion
-                    )
+                    // Usar la función de extensión para mapear correctamente
+                    val propiedadConvertida = entity.toPropiedad()
 
                     // Ahora, cargar las imágenes asociadas a esta propiedad
                     propiedadViewModel.getImagenesByPropiedad(entity.id).observe(viewLifecycleOwner, Observer { imagenesEntity ->
@@ -131,28 +111,7 @@ class HomeFragment : Fragment() {
                     } else if (contador.get() > 0) {
                         // Aún estamos esperando las imágenes, mostrar las propiedades sin imágenes
                         for (entity in propiedadesEntity) {
-                            val propiedadSinImagenes = Propiedad(
-                                id = entity.id.toString(),
-                                titulo = entity.titulo,
-                                descripcion = entity.descripcion,
-                                precio = entity.precio,
-                                ubicacion = Ubicacion(
-                                    direccion = entity.direccion,
-                                    latitud = entity.latitud,
-                                    longitud = entity.longitud
-                                ),
-                                dimensiones = Dimensiones(
-                                    largo = entity.largo,
-                                    ancho = entity.ancho,
-                                    area = entity.area
-                                ),
-                                caracteristicas = entity.caracteristicas.split(",").filter { it.isNotEmpty() },
-                                imagenes = emptyList(),
-                                estado = entity.estado,
-                                medioContacto = entity.medioContacto,
-                                vendedorId = entity.vendedorId,
-                                fechaPublicacion = entity.fechaPublicacion
-                            )
+                            val propiedadSinImagenes = entity.toPropiedad().copy(imagenes = emptyList())
                             propiedadesConvertidas.add(propiedadSinImagenes)
                         }
                         mostrarPropiedades(propiedadesConvertidas)

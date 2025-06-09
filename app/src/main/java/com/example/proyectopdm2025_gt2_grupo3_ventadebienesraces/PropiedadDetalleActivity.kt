@@ -34,8 +34,8 @@ class PropiedadDetalleActivity : AppCompatActivity() {
         val precio = intent.getDoubleExtra("PROPIEDAD_PRECIO", 0.0)
         val direccion = intent.getStringExtra("PROPIEDAD_DIRECCION") ?: ""
         val area = intent.getDoubleExtra("PROPIEDAD_AREA", 0.0)
-        val habitaciones = intent.getStringExtra("PROPIEDAD_HABITACIONES") ?: "N/A"
-        val banos = intent.getStringExtra("PROPIEDAD_BANOS") ?: "N/A"
+        val habitaciones = intent.getIntExtra("PROPIEDAD_HABITACIONES", 0)
+        val banos = intent.getIntExtra("PROPIEDAD_BANOS", 0)
         val estado = intent.getStringExtra("PROPIEDAD_ESTADO") ?: "DISPONIBLE"
         val contacto = intent.getStringExtra("PROPIEDAD_CONTACTO") ?: ""
         val imageUrl = intent.getStringExtra("PROPIEDAD_IMAGEN") ?: ""
@@ -130,8 +130,8 @@ class PropiedadDetalleActivity : AppCompatActivity() {
         tvPrecio.text = formatoMoneda.format(precio)
 
         tvUbicacion.text = direccion
-        tvDormitorios.text = habitaciones
-        tvBanos.text = banos
+        tvDormitorios.text = if (habitaciones > 0) "$habitaciones" else "N/A"
+        tvBanos.text = if (banos > 0) "$banos" else "N/A"
         tvArea.text = "$area m²"
 
         // Agregar las características dinámicamente a la sección de características
