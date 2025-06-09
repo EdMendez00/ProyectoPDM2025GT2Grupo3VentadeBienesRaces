@@ -13,8 +13,12 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.adapters.PublicacionAdapter
+import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Propiedad
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
@@ -31,11 +35,6 @@ class ProfileFragment : Fragment() {
     private lateinit var viewPager: ViewPager2
     private lateinit var btnAddProperty: MaterialButton
     private lateinit var layoutHomeIcon: LinearLayout
-    private lateinit var layoutMyPublications: LinearLayout
-
-    // Referencias a las pestañas personalizadas
-    private lateinit var tabMyPublications: CardView
-    private lateinit var tabFavorites: CardView
 
     // Inicializar Firebase de manera lazy para que se cargue solo cuando se necesite
     private val auth by lazy { FirebaseAuth.getInstance() }
@@ -55,7 +54,7 @@ class ProfileFragment : Fragment() {
                 // Inicializar vistas
                 initViews(view)
 
-                // Configurar ViewPager y pestañas
+                // Configurar ViewPager
                 setupViewPager()
 
                 // Configurar listeners de clics
@@ -83,39 +82,12 @@ class ProfileFragment : Fragment() {
         viewPager = view.findViewById(R.id.viewpager_profile)
         btnAddProperty = view.findViewById(R.id.btn_add_property)
         layoutHomeIcon = view.findViewById(R.id.layout_home_icon)
-        layoutMyPublications = view.findViewById(R.id.layout_my_publications)
-
-        // Inicializar pestañas
-        tabMyPublications = view.findViewById(R.id.tab_my_publications)
-        tabFavorites = view.findViewById(R.id.tab_favorites)
-
-        // Configurar listeners de las pestañas
-        tabMyPublications.setOnClickListener {
-            viewPager.currentItem = 0
-            updateTabStyles(0)
-        }
-
-        tabFavorites.setOnClickListener {
-            viewPager.currentItem = 1
-            updateTabStyles(1)
-        }
     }
 
     private fun setupViewPager() {
         // Configurar el adaptador para ViewPager2 si la vista ya está inicializada
         if (::viewPager.isInitialized) {
             viewPager.adapter = ProfileTabAdapter(this)
-
-            // Listener para cambios de página
-            viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    updateTabStyles(position)
-                }
-            })
-
-            // Establecer la página inicial a "Mis Publicaciones"
-            viewPager.currentItem = 0
-            updateTabStyles(0)
         }
     }
 
@@ -179,40 +151,12 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    // Actualiza el estilo visual de las pestañas según la selección
-    private fun updateTabStyles(selectedPosition: Int) {
-        if (!::tabMyPublications.isInitialized || !::tabFavorites.isInitialized ||
-            !::layoutMyPublications.isInitialized) {
-            return
-        }
-
-        if (selectedPosition == 0) {
-            // Pestaña "Mis Publicaciones" activa
-            tabMyPublications.setCardBackgroundColor(resources.getColor(R.color.white, null))
-            tabFavorites.setCardBackgroundColor(resources.getColor(R.color.color_gray_border, null))
-
-            // Mostrar las publicaciones del usuario
-            layoutMyPublications.visibility = View.VISIBLE
-        } else {
-            // Pestaña "Favoritos" activa
-            tabMyPublications.setCardBackgroundColor(resources.getColor(R.color.color_gray_border, null))
-            tabFavorites.setCardBackgroundColor(resources.getColor(R.color.white, null))
-
-            // Ocultar las publicaciones al mostrar favoritos
-            layoutMyPublications.visibility = View.GONE
-        }
-    }
-
-    // Adaptador para las pestañas
+    // Adaptador para el ViewPager - ahora solo muestra favoritos
     private inner class ProfileTabAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
-        override fun getItemCount() = 2
+        override fun getItemCount() = 1  // Ahora solo tenemos una página: Favoritos
 
         override fun createFragment(position: Int): Fragment {
-            return when(position) {
-                0 -> MyPublicationsFragment()
-                1 -> FavoriteFragment() // Usando la clase FavoriteFragment existente
-                else -> throw IndexOutOfBoundsException("Solo hay 2 pestañas")
-            }
+            return FavoriteFragment()  // Siempre devolvemos FavoriteFragment
         }
     }
 
@@ -224,15 +168,3 @@ class ProfileFragment : Fragment() {
         }
     }
 }
-
-// Fragmento para "Mis Publicaciones"
-class MyPublicationsFragment : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Este fragmento puede estar vacío ya que mostramos el contenido directamente en ProfileFragment
-        return View(context)
-    }
-}
-
