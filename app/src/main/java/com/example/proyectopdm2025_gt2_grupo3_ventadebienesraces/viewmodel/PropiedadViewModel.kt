@@ -139,6 +139,7 @@ fun com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.local.entity.Propi
         vendedorId = this.vendedorId,
         fechaPublicacion = this.fechaPublicacion,
         dormitorios = this.dormitorios,
-        banos = this.banos
+        banos = this.banos,
+        tipoPropiedad = this.tipoPropiedad
     )
 }

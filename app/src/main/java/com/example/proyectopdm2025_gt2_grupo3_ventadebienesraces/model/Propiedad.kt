@@ -21,7 +21,8 @@ data class Propiedad(
     val vendedorId: String = "",
     val fechaPublicacion: Date = Date(),
     val dormitorios: Int = 0,
-    val banos: Int = 0
+    val banos: Int = 0,
+    val tipoPropiedad: String = ""
 )
 
 @IgnoreExtraProperties

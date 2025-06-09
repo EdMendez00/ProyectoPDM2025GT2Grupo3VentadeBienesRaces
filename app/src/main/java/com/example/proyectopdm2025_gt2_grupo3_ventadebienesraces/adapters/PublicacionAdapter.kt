@@ -126,6 +126,7 @@ class PublicacionAdapter(
                     putExtra("PROPIEDAD_BANOS", propiedad.banos)
                     putExtra("PROPIEDAD_ESTADO", propiedad.estado)
                     putExtra("PROPIEDAD_CONTACTO", propiedad.medioContacto)
+                    putExtra("PROPIEDAD_TIPO", propiedad.tipoPropiedad ?: "N/A")
 
                     // Pasar imagen principal si existe
                     if (propiedad.imagenes.isNotEmpty()) {

@@ -62,6 +62,14 @@ class PropiedadDetalleActivity : AppCompatActivity() {
         layoutCaracteristicas = findViewById(R.id.layoutCaracteristicas)
         layoutContacto = findViewById(R.id.layoutContacto)
 
+        // Referencias a los TextView de detalles adicionales
+        val tvTipoPropiedad = findViewById<TextView>(R.id.tvTipoPropiedad)
+        val tvSuperficie = findViewById<TextView>(R.id.tvSuperficie)
+        val tvDormitoriosDetalle = findViewById<TextView>(R.id.tvDormitoriosDetalle)
+        val tvBanosDetalle = findViewById<TextView>(R.id.tvBanosDetalle)
+        val tvUbicacionDetalle = findViewById<TextView>(R.id.tvUbicacionDetalle)
+        val tvEstadoDetalle = findViewById<TextView>(R.id.tvEstadoDetalle)
+
         // Configurar el botón de retroceso
         btnBack.setOnClickListener {
             finish()
@@ -133,6 +141,14 @@ class PropiedadDetalleActivity : AppCompatActivity() {
         tvDormitorios.text = if (habitaciones > 0) "$habitaciones" else "N/A"
         tvBanos.text = if (banos > 0) "$banos" else "N/A"
         tvArea.text = "$area m²"
+
+        // Asignar valores a los detalles adicionales
+        tvTipoPropiedad.text = intent.getStringExtra("PROPIEDAD_TIPO") ?: "N/A"
+        tvSuperficie.text = if (area > 0) "$area m²" else "N/A"
+        tvDormitoriosDetalle.text = if (habitaciones > 0) "$habitaciones" else "N/A"
+        tvBanosDetalle.text = if (banos > 0) "$banos" else "N/A"
+        tvUbicacionDetalle.text = direccion
+        tvEstadoDetalle.text = estado
 
         // Agregar las características dinámicamente a la sección de características
         if (caracteristicas.isNotEmpty()) {
