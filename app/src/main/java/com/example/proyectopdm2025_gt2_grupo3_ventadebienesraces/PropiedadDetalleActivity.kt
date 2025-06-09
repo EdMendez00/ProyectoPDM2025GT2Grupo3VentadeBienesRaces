@@ -227,6 +227,21 @@ class PropiedadDetalleActivity : AppCompatActivity() {
         val telefono = intent.getStringExtra("PROPIEDAD_TELEFONO") ?: ""
         tvTelefono.text = telefono
 
+        // Acción para el botón de llamar: copiar y abrir app de teléfono
+        val btnLlamar = findViewById<LinearLayout>(R.id.btnLlamar)
+        btnLlamar.setOnClickListener {
+            if (telefono.isNotBlank()) {
+                // Copiar al portapapeles
+                val clipboard = getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                val clip = android.content.ClipData.newPlainText("tel", telefono)
+                clipboard.setPrimaryClip(clip)
+                // Abrir app de teléfono con el número pegado
+                val intent = Intent(Intent.ACTION_DIAL)
+                intent.data = Uri.parse("tel:$telefono")
+                startActivity(intent)
+            }
+        }
+
         // Por defecto, mostrar la sección de detalles
         mostrarSeccion(0)
     }
