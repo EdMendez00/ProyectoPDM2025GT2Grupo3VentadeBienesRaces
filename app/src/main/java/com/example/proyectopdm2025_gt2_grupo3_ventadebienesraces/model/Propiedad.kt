@@ -22,7 +22,9 @@ data class Propiedad(
     val fechaPublicacion: Date = Date(),
     val dormitorios: Int = 0,
     val banos: Int = 0,
-    val tipoPropiedad: String = ""
+    val tipoPropiedad: String = "",
+    @Exclude
+    var esFavorito: Boolean = false
 )
 
 @IgnoreExtraProperties

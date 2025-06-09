@@ -12,12 +12,28 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/imgPublicacion"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="centerCrop"
-            android:contentDescription="Imagen de la propiedad" />
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imgPublicacion"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:scaleType="centerCrop"
+                android:contentDescription="Imagen de la propiedad" />
+
+            <ImageView
+                android:id="@+id/btnFavorito"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_favorite_border"
+                android:layout_gravity="top|end"
+                android:layout_margin="12dp"
+                android:background="@drawable/circle_background"
+                android:padding="6dp"
+                android:contentDescription="Marcar como favorito" />
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -103,4 +119,3 @@
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
-
