@@ -27,7 +27,7 @@ import java.util.Locale
 class PublicacionAdapter(
     private val propiedades: List<Propiedad>,
     private val onFavoritoClickListener: ((Propiedad, Boolean) -> Unit)? = null
-) : RecyclerView.Adapter<PublicacionAdapter.PropiedadViewHolder>() {
+) : RecyclerView.Adapter<PublicacionAdapter.PropiedadViewHolder>(), FavoritosManager.FavoritoChangeListener {
 
     private lateinit var favoritosManager: FavoritosManager
     private val TAG = "PublicacionAdapter"
@@ -36,9 +36,11 @@ class PublicacionAdapter(
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_publicacion, parent, false)
 
-        // Inicializar el FavoritosManager
+        // Inicializar el FavoritosManager usando el singleton
         if (!::favoritosManager.isInitialized) {
-            favoritosManager = FavoritosManager(parent.context)
+            favoritosManager = FavoritosManager.getInstance(parent.context)
+            // Registrar este adaptador como listener para cambios en favoritos
+            favoritosManager.addFavoritoChangeListener(this)
         }
 
         return PropiedadViewHolder(view)
@@ -52,6 +54,29 @@ class PublicacionAdapter(
     }
 
     override fun getItemCount(): Int = propiedades.size
+
+    /**
+     * Implementación del listener de FavoritosManager
+     * Se llama cuando cambia el estado de favorito de una propiedad
+     */
+    override fun onFavoritoChanged(propiedadId: String, esFavorito: Boolean) {
+        // Buscar la propiedad afectada y actualizar su estado
+        val position = propiedades.indexOfFirst { it.id == propiedadId }
+        if (position != -1) {
+            propiedades[position].esFavorito = esFavorito
+            notifyItemChanged(position)
+            Log.d(TAG, "Propiedad actualizada por listener: $propiedadId, esFavorito=$esFavorito")
+        }
+    }
+
+    /**
+     * Limpiar recursos cuando el adaptador ya no se usa
+     */
+    fun onDestroy() {
+        if (::favoritosManager.isInitialized) {
+            favoritosManager.removeFavoritoChangeListener(this)
+        }
+    }
 
     inner class PropiedadViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val txtTitulo: TextView = itemView.findViewById(R.id.txtTitulo)
@@ -87,10 +112,10 @@ class PublicacionAdapter(
                 // Configurar el listener del botón de favorito
                 btnFavorito.setOnClickListener {
                     try {
-                        // Toggle el estado de favorito usando el nuevo manager
+                        // Toggle el estado de favorito usando el manager
                         val nuevoEsFavorito = favoritosManager.toggleFavorito(propiedad)
 
-                        // Actualizar el modelo
+                        // Actualizar el modelo (ahora es redundante con el listener, pero lo mantenemos por seguridad)
                         propiedad.esFavorito = nuevoEsFavorito
 
                         // Actualizar la UI
@@ -234,5 +259,3 @@ class PublicacionAdapter(
         }
     }
 }
-
-

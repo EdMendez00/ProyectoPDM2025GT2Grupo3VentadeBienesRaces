@@ -19,9 +19,53 @@ class FavoritosManager(context: Context) {
     private val gson: Gson = GsonBuilder().setLenient().create()
     private val listType: Type = object : TypeToken<List<Propiedad>>() {}.type
 
+    // Lista de listeners para notificar sobre cambios en favoritos
+    private val favoritoChangeListeners = mutableListOf<FavoritoChangeListener>()
+
     init {
         val count = getFavoritos().size
         Log.d(TAG, "FavoritosManager inicializado con $count favoritos")
+    }
+
+    /**
+     * Interfaz para recibir notificaciones de cambios en favoritos
+     */
+    interface FavoritoChangeListener {
+        fun onFavoritoChanged(propiedadId: String, esFavorito: Boolean)
+    }
+
+    /**
+     * Registra un listener para recibir notificaciones de cambios en favoritos
+     */
+    fun addFavoritoChangeListener(listener: FavoritoChangeListener) {
+        if (!favoritoChangeListeners.contains(listener)) {
+            favoritoChangeListeners.add(listener)
+            Log.d(TAG, "Listener añadido. Total: ${favoritoChangeListeners.size}")
+        }
+    }
+
+    /**
+     * Elimina un listener previamente registrado
+     */
+    fun removeFavoritoChangeListener(listener: FavoritoChangeListener) {
+        favoritoChangeListeners.remove(listener)
+        Log.d(TAG, "Listener eliminado. Total: ${favoritoChangeListeners.size}")
+    }
+
+    /**
+     * Notifica a todos los listeners registrados sobre un cambio en el estado de favorito
+     */
+    private fun notifyFavoritoChanged(propiedadId: String, esFavorito: Boolean) {
+        Log.d(TAG, "Notificando cambio en favorito: $propiedadId, esFavorito=$esFavorito")
+        // Copia la lista para evitar problemas si se modifica durante la iteración
+        val listeners = ArrayList(favoritoChangeListeners)
+        listeners.forEach { listener ->
+            try {
+                listener.onFavoritoChanged(propiedadId, esFavorito)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error al notificar listener: ${e.message}")
+            }
+        }
     }
 
     /**
@@ -83,6 +127,12 @@ class FavoritosManager(context: Context) {
 
         val resultado = saveFavoritos(favoritos)
         Log.d(TAG, "Propiedad ${propiedad.id} agregada a favoritos: $resultado")
+
+        // Notificar el cambio a los listeners
+        if (resultado) {
+            notifyFavoritoChanged(propiedad.id, true)
+        }
+
         return resultado
     }
 
@@ -102,6 +152,12 @@ class FavoritosManager(context: Context) {
 
         val resultado = saveFavoritos(favoritos)
         Log.d(TAG, "Propiedad $propiedadId eliminada de favoritos: $resultado")
+
+        // Notificar el cambio a los listeners
+        if (resultado) {
+            notifyFavoritoChanged(propiedadId, false)
+        }
+
         return resultado
     }
 
@@ -123,15 +179,31 @@ class FavoritosManager(context: Context) {
      * Limpia todos los favoritos.
      */
     fun limpiarTodosFavoritos() {
+        val favoritos = getFavoritos()
+        val ids = favoritos.map { it.id }
+
         prefs.edit().clear().commit()
         Log.d(TAG, "Todos los favoritos han sido eliminados")
+
+        // Notificar que todos los favoritos han sido eliminados
+        ids.forEach { propiedadId ->
+            notifyFavoritoChanged(propiedadId, false)
+        }
     }
 
     companion object {
         private const val TAG = "FavoritosManager"
         private const val PREF_NAME = "favoritos_prefs_v2"
         private const val KEY_FAVORITOS_LIST = "favoritos_list"
+
+        // Instancia singleton para uso en toda la app
+        @Volatile
+        private var INSTANCE: FavoritosManager? = null
+
+        fun getInstance(context: Context): FavoritosManager {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: FavoritosManager(context.applicationContext).also { INSTANCE = it }
+            }
+        }
     }
 }
-
-
