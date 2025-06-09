@@ -135,11 +135,26 @@ class PublicacionAdapter(
 
                     // Pasar todas las características como ArrayList
                     putStringArrayListExtra("PROPIEDAD_CARACTERISTICAS", ArrayList(propiedad.caracteristicas))
+
+                    // Datos de vendedor (simulación, deberías obtenerlos del modelo real)
+                    putExtra("VENDEDOR_NOMBRE", propiedad.medioContacto) // O usa el campo correcto si tienes nombre
+                    putExtra("VENDEDOR_EMPRESA", "Empresa Demo") // Cambia por el campo real si existe
+                    putExtra("VENDEDOR_EMAIL", "contacto@ejemplo.com") // Cambia por el campo real si existe
+                    // Teléfono para btnLlamar
+                    putExtra("PROPIEDAD_TELEFONO", obtenerTelefonoFormateado(propiedad.medioContacto))
                 }
 
                 // Iniciar la actividad
                 itemView.context.startActivity(intent)
             }
+        }
+
+        // Función para formatear el teléfono a xxxx-xxxx
+        private fun obtenerTelefonoFormateado(telefono: String): String {
+            val soloDigitos = telefono.filter { it.isDigit() }
+            return if (soloDigitos.length == 8) {
+                soloDigitos.substring(0, 4) + "-" + soloDigitos.substring(4)
+            } else telefono
         }
     }
 }

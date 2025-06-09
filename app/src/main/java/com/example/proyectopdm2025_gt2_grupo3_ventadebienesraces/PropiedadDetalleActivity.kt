@@ -70,6 +70,20 @@ class PropiedadDetalleActivity : AppCompatActivity() {
         val tvUbicacionDetalle = findViewById<TextView>(R.id.tvUbicacionDetalle)
         val tvEstadoDetalle = findViewById<TextView>(R.id.tvEstadoDetalle)
 
+        // Referencias a los TextView de vendedor
+        val tvNombreVendedor = findViewById<TextView>(R.id.tvNombreVendedor)
+        val tvEmpresaVendedor = findViewById<TextView>(R.id.tvEmpresaVendedor)
+        val tvEmailVendedor = findViewById<TextView>(R.id.tvEmailVendedor)
+
+        val infoVendedor = intent.getStringExtra("VENDEDOR_NOMBRE") ?: ""
+        val nombreVendedor = Regex("Nombre:([^,]+)").find(infoVendedor)?.groupValues?.get(1)?.trim() ?: "N/A"
+        val empresaVendedor = Regex("Empresa:([^,]+)").find(infoVendedor)?.groupValues?.get(1)?.trim() ?: "N/A"
+        val emailVendedor = Regex("Email:([^,]+)").find(infoVendedor)?.groupValues?.get(1)?.trim() ?: "N/A"
+
+        tvNombreVendedor.text = nombreVendedor
+        tvEmpresaVendedor.text = empresaVendedor
+        tvEmailVendedor.text = emailVendedor
+
         // Configurar el botón de retroceso
         btnBack.setOnClickListener {
             finish()
@@ -207,6 +221,11 @@ class PropiedadDetalleActivity : AppCompatActivity() {
                 .centerCrop()
                 .into(imgPropiedad)
         }
+
+        // Mostrar el teléfono en el botón de llamar
+        val tvTelefono = findViewById<TextView>(R.id.tvTelefono)
+        val telefono = intent.getStringExtra("PROPIEDAD_TELEFONO") ?: ""
+        tvTelefono.text = telefono
 
         // Por defecto, mostrar la sección de detalles
         mostrarSeccion(0)
