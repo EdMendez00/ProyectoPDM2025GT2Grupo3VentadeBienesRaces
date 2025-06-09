@@ -151,9 +151,17 @@ class PropiedadDetalleActivity : AppCompatActivity() {
         tvEstadoDetalle.text = estado
 
         // Agregar las características dinámicamente a la sección de características
-        if (caracteristicas.isNotEmpty()) {
-            // Aquí podrías agregar código para añadir características dinámicamente a la sección
-            // utilizando el patrón de diseño que tienes en tu XML
+        val layoutListaCaracteristicas = findViewById<LinearLayout>(R.id.layoutCaracteristicas)
+        val inflater = layoutInflater
+        val listaCaracteristicas = caracteristicas.filter { it.isNotBlank() }
+        layoutListaCaracteristicas.removeAllViews()
+        if (listaCaracteristicas.isNotEmpty()) {
+            for (caracteristica in listaCaracteristicas) {
+                val item = inflater.inflate(R.layout.item_caracteristica, layoutListaCaracteristicas, false)
+                val txtCaracteristica = item.findViewById<TextView>(R.id.textCaracteristicas)
+                txtCaracteristica.text = caracteristica
+                layoutListaCaracteristicas.addView(item)
+            }
         }
 
         // Cargar imagen con Glide
