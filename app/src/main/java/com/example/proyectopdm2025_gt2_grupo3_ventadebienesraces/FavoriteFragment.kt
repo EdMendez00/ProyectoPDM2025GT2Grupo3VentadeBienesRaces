@@ -44,7 +44,7 @@ class FavoriteFragment : Fragment() {
         emptyLayout = view.findViewById(R.id.layout_empty_favorites)
         btnExplore = view.findViewById(R.id.btn_explore_properties)
 
-        // Inicializar el manager de favoritos
+        // Inicializar el manager de favoritos con la nueva implementación
         favoritosManager = FavoritosManager(requireContext())
 
         setupRecyclerView()
@@ -69,17 +69,9 @@ class FavoriteFragment : Fragment() {
             Log.d(TAG, "Cambio de estado favorito: ${propiedad.id}, esFavorito=$esFavorito")
 
             if (!esFavorito) {
-                // Si se desmarca como favorito, eliminamos de la lista y actualizamos UI
-                val position = propiedadesFavoritas.indexOfFirst { it.id == propiedad.id }
-                if (position != -1) {
-                    propiedadesFavoritas.removeAt(position)
-                    adapter.notifyItemRemoved(position)
-
-                    // Verificar si quedaron favoritos
-                    if (propiedadesFavoritas.isEmpty()) {
-                        showEmptyState(true)
-                    }
-                }
+                // Si se desmarca como favorito, recargamos la lista completa
+                // para evitar problemas de sincronización
+                cargarFavoritos()
             }
         }
 
@@ -107,7 +99,8 @@ class FavoriteFragment : Fragment() {
         try {
             Log.d(TAG, "Cargando favoritos desde almacenamiento")
             // Obtener propiedades favoritas desde el gestor de favoritos
-            val nuevasFavoritas = favoritosManager.getPropiedadesFavoritas()
+            // usando el nuevo método getFavoritos()
+            val nuevasFavoritas = favoritosManager.getFavoritos()
 
             Log.d(TAG, "Se encontraron ${nuevasFavoritas.size} favoritos")
 
@@ -126,6 +119,7 @@ class FavoriteFragment : Fragment() {
         } catch (e: Exception) {
             Log.e(TAG, "Error al cargar favoritos: ${e.message}", e)
             showEmptyState(true)
+            Toast.makeText(context, "Error al cargar favoritos", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -144,3 +138,5 @@ class FavoriteFragment : Fragment() {
         fun newInstance() = FavoriteFragment()
     }
 }
+
+

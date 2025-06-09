@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.PropiedadDetalleActivity
@@ -83,11 +84,11 @@ class PublicacionAdapter(
                 // Actualizar estado del botón favorito
                 actualizarBotonFavorito(propiedad.esFavorito)
 
-                // Configurar el listener del botón de favorito con manejo de errores
+                // Configurar el listener del botón de favorito
                 btnFavorito.setOnClickListener {
                     try {
-                        // Cambiar el estado del favorito
-                        val nuevoEsFavorito = !propiedad.esFavorito
+                        // Toggle el estado de favorito usando el nuevo manager
+                        val nuevoEsFavorito = favoritosManager.toggleFavorito(propiedad)
 
                         // Actualizar el modelo
                         propiedad.esFavorito = nuevoEsFavorito
@@ -95,21 +96,23 @@ class PublicacionAdapter(
                         // Actualizar la UI
                         actualizarBotonFavorito(nuevoEsFavorito)
 
-                        // Guardar el cambio en el almacenamiento local
-                        if (nuevoEsFavorito) {
-                            // Marcar como favorito
-                            val marcado = favoritosManager.marcarComoFavorito(propiedad)
-                            Log.d(TAG, "Propiedad marcada como favorita: ${propiedad.id}, resultado: $marcado")
-                        } else {
-                            // Desmarcar como favorito
-                            val desmarcado = favoritosManager.desmarcarComoFavorito(propiedad.id)
-                            Log.d(TAG, "Propiedad desmarcada como favorita: ${propiedad.id}, resultado: $desmarcado")
-                        }
+                        // Informar al usuario con un mensaje
+                        val mensaje = if (nuevoEsFavorito)
+                            "Agregado a favoritos"
+                        else
+                            "Eliminado de favoritos"
+                        Toast.makeText(itemView.context, mensaje, Toast.LENGTH_SHORT).show()
 
                         // Notificar al listener externo
                         onFavoritoClickListener?.invoke(propiedad, nuevoEsFavorito)
+
                     } catch (e: Exception) {
                         Log.e(TAG, "Error al cambiar estado de favorito: ${e.message}", e)
+                        Toast.makeText(
+                            itemView.context,
+                            "Error al actualizar favoritos",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
@@ -137,7 +140,6 @@ class PublicacionAdapter(
                             .error(R.drawable.placeholder_home)
                             .centerCrop()
                             .into(imgPublicacion)
-                        Log.d(TAG, "Cargando imagen desde URL: $imagePath")
                     } else {
                         // Es una ruta de archivo local
                         val imageFile = File(imagePath)
@@ -148,18 +150,15 @@ class PublicacionAdapter(
                                 .error(R.drawable.placeholder_home)
                                 .centerCrop()
                                 .into(imgPublicacion)
-                            Log.d(TAG, "Cargando imagen local: $imagePath")
                         } else {
                             // Si el archivo no existe, usar placeholder
                             Glide.with(itemView.context)
                                 .load(R.drawable.placeholder_home)
                                 .centerCrop()
                                 .into(imgPublicacion)
-                            Log.d(TAG, "Archivo local no encontrado: $imagePath")
                         }
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG, "Error cargando imagen: ${e.message}", e)
                     // Cargar imagen por defecto en caso de error
                     Glide.with(itemView.context)
                         .load(R.drawable.placeholder_home)
@@ -172,7 +171,6 @@ class PublicacionAdapter(
                     .load(R.drawable.placeholder_home)
                     .centerCrop()
                     .into(imgPublicacion)
-                Log.d(TAG, "No hay imágenes para esta propiedad")
             }
         }
 
@@ -236,3 +234,5 @@ class PublicacionAdapter(
         }
     }
 }
+
+

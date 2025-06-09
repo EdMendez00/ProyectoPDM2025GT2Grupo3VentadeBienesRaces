@@ -6,22 +6,54 @@ import android.util.Log
 import com.example.proyectopdm2025_gt2_grupo3_ventadebienesraces.model.Propiedad
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonSyntaxException
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Type
 
 /**
- * Gestor de propiedades favoritas que utiliza SharedPreferences para almacenamiento local.
+ * Gestor simplificado de propiedades favoritas.
+ * Guarda toda la lista como un único JSON en SharedPreferences.
  */
 class FavoritosManager(context: Context) {
 
     private val prefs: SharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     private val gson: Gson = GsonBuilder().setLenient().create()
+    private val listType: Type = object : TypeToken<List<Propiedad>>() {}.type
 
     init {
-        // Registrar el número de favoritos al inicializar (para depuración)
-        val favoritos = getFavoritosIds()
-        Log.d(TAG, "Inicializando FavoritosManager: ${favoritos.size} favoritos encontrados")
-        for (id in favoritos) {
-            Log.d(TAG, "ID favorito: $id")
+        val count = getFavoritos().size
+        Log.d(TAG, "FavoritosManager inicializado con $count favoritos")
+    }
+
+    /**
+     * Obtiene la lista completa de propiedades favoritas.
+     */
+    fun getFavoritos(): MutableList<Propiedad> {
+        val json = prefs.getString(KEY_FAVORITOS_LIST, "[]")
+        val favoritos = try {
+            gson.fromJson<MutableList<Propiedad>>(json, listType) ?: mutableListOf()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error al deserializar favoritos: ${e.message}")
+            mutableListOf<Propiedad>()
+        }
+
+        // Asegurarse de que todos estén marcados como favoritos
+        favoritos.forEach { it.esFavorito = true }
+
+        return favoritos
+    }
+
+    /**
+     * Guarda la lista completa de favoritos.
+     */
+    private fun saveFavoritos(favoritos: List<Propiedad>): Boolean {
+        return try {
+            val json = gson.toJson(favoritos)
+            prefs.edit().putString(KEY_FAVORITOS_LIST, json).commit()
+            Log.d(TAG, "Favoritos guardados: ${favoritos.size} elementos")
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "Error al guardar favoritos: ${e.message}")
+            false
         }
     }
 
@@ -29,169 +61,66 @@ class FavoritosManager(context: Context) {
      * Verifica si una propiedad está marcada como favorita.
      */
     fun esFavorito(propiedadId: String): Boolean {
-        val favoritosSet = getFavoritosIds()
-        val esFav = favoritosSet.contains(propiedadId)
-        Log.d(TAG, "Verificando favorito $propiedadId: $esFav")
-        return esFav
+        val favoritos = getFavoritos()
+        return favoritos.any { it.id == propiedadId }
     }
 
     /**
      * Marca una propiedad como favorita.
      */
-    fun marcarComoFavorito(propiedad: Propiedad): Boolean {
-        Log.d(TAG, "Marcando como favorito: ${propiedad.id}")
-        val favoritosSet = getFavoritosIds().toMutableSet()
-        favoritosSet.add(propiedad.id)
+    fun agregarFavorito(propiedad: Propiedad): Boolean {
+        val favoritos = getFavoritos()
 
-        // Guardar en SharedPreferences
-        val saved = prefs.edit()
-            .putStringSet(KEY_FAVORITOS, favoritosSet)
-            .commit()
-
-        // Guardar la información completa de la propiedad
-        guardarPropiedadFavorita(propiedad)
-
-        return saved
-    }
-
-    /**
-     * Desmarca una propiedad como favorita.
-     */
-    fun desmarcarComoFavorito(propiedadId: String): Boolean {
-        Log.d(TAG, "Desmarcando favorito: $propiedadId")
-        val favoritosSet = getFavoritosIds().toMutableSet()
-
-        // Verificar si la propiedad está en favoritos
-        if (!favoritosSet.contains(propiedadId)) {
-            Log.d(TAG, "La propiedad $propiedadId no estaba en favoritos")
+        // Verificar si ya existe
+        if (favoritos.any { it.id == propiedad.id }) {
+            Log.d(TAG, "La propiedad ${propiedad.id} ya está en favoritos")
             return true
         }
 
-        // Remover del conjunto de IDs
-        favoritosSet.remove(propiedadId)
+        // Marcar como favorito
+        propiedad.esFavorito = true
+        favoritos.add(propiedad)
 
-        // Guardar el conjunto actualizado
-        val savedSet = prefs.edit()
-            .putStringSet(KEY_FAVORITOS, favoritosSet)
-            .commit()
-
-        // Eliminar datos de la propiedad
-        val removedData = eliminarPropiedadFavorita(propiedadId)
-
-        Log.d(TAG, "Favorito eliminado ($propiedadId): ID Set=$savedSet, Data=$removedData")
-        return savedSet && removedData
-    }
-
-    /**
-     * Marca o desmarca una propiedad como favorita.
-     * @return true si la propiedad fue marcada como favorita, false si fue desmarcada
-     */
-    fun toggleFavorito(propiedad: Propiedad): Boolean {
-        val favoritosSet = getFavoritosIds().toMutableSet()
-
-        return if (favoritosSet.contains(propiedad.id)) {
-            // Está en favoritos, hay que desmarcar
-            desmarcarComoFavorito(propiedad.id)
-            false // Fue desmarcada
-        } else {
-            // No está en favoritos, hay que marcar
-            marcarComoFavorito(propiedad)
-            true // Fue marcada
-        }
-    }
-
-    /**
-     * Obtiene todos los IDs de las propiedades favoritas.
-     */
-    fun getFavoritosIds(): Set<String> {
-        val resultado = prefs.getStringSet(KEY_FAVORITOS, setOf()) ?: setOf()
-        Log.d(TAG, "Obteniendo IDs de favoritos: ${resultado.size} elementos")
+        val resultado = saveFavoritos(favoritos)
+        Log.d(TAG, "Propiedad ${propiedad.id} agregada a favoritos: $resultado")
         return resultado
     }
 
     /**
-     * Guarda la información completa de una propiedad marcada como favorita.
+     * Elimina una propiedad de favoritos.
      */
-    fun guardarPropiedadFavorita(propiedad: Propiedad): Boolean {
-        try {
-            val json = gson.toJson(propiedad)
-            val key = KEY_PROPIEDAD_PREFIX + propiedad.id
-            val result = prefs.edit().putString(key, json).commit()
-            Log.d(TAG, "Guardando datos de propiedad favorita ${propiedad.id}: $result")
-            return result
-        } catch (e: Exception) {
-            Log.e(TAG, "Error al guardar propiedad favorita: ${e.message}", e)
+    fun eliminarFavorito(propiedadId: String): Boolean {
+        val favoritos = getFavoritos()
+        val tamanioOriginal = favoritos.size
+
+        favoritos.removeAll { it.id == propiedadId }
+
+        if (favoritos.size == tamanioOriginal) {
+            Log.d(TAG, "Propiedad $propiedadId no encontrada en favoritos")
             return false
         }
+
+        val resultado = saveFavoritos(favoritos)
+        Log.d(TAG, "Propiedad $propiedadId eliminada de favoritos: $resultado")
+        return resultado
     }
 
     /**
-     * Elimina la información de una propiedad que ya no es favorita.
+     * Cambia el estado de favorito de una propiedad.
+     * @return true si ahora es favorito, false si ya no lo es
      */
-    fun eliminarPropiedadFavorita(propiedadId: String): Boolean {
-        val key = KEY_PROPIEDAD_PREFIX + propiedadId
-        val result = prefs.edit().remove(key).commit()
-        Log.d(TAG, "Eliminando datos de propiedad: $propiedadId - Resultado: $result")
-        return result
-    }
-
-    /**
-     * Obtiene la lista completa de propiedades favoritas.
-     */
-    fun getPropiedadesFavoritas(): List<Propiedad> {
-        val propiedades = mutableListOf<Propiedad>()
-        val favoritosIds = getFavoritosIds()
-
-        Log.d(TAG, "Recuperando ${favoritosIds.size} propiedades favoritas")
-
-        for (id in favoritosIds) {
-            val key = KEY_PROPIEDAD_PREFIX + id
-            val json = prefs.getString(key, null)
-
-            if (json != null) {
-                try {
-                    val propiedad = gson.fromJson(json, Propiedad::class.java)
-                    if (propiedad != null) {
-                        propiedad.esFavorito = true
-                        propiedades.add(propiedad)
-                        Log.d(TAG, "Propiedad favorita recuperada: ${propiedad.id}")
-                    } else {
-                        Log.w(TAG, "La deserialización devolvió null para $id")
-                        limpiarFavoritoInvalido(id)
-                    }
-                } catch (e: JsonSyntaxException) {
-                    Log.e(TAG, "Error al deserializar propiedad: $id", e)
-                    limpiarFavoritoInvalido(id)
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error desconocido al cargar propiedad: $id", e)
-                    limpiarFavoritoInvalido(id)
-                }
-            } else {
-                Log.w(TAG, "No hay datos JSON para la propiedad favorita: $id")
-                limpiarFavoritoInvalido(id)
-            }
+    fun toggleFavorito(propiedad: Propiedad): Boolean {
+        return if (esFavorito(propiedad.id)) {
+            eliminarFavorito(propiedad.id)
+            false
+        } else {
+            agregarFavorito(propiedad)
+            true
         }
-
-        Log.d(TAG, "Total de propiedades favoritas recuperadas: ${propiedades.size}")
-        return propiedades
     }
 
     /**
-     * Limpia un favorito inválido de todas las preferencias
-     */
-    private fun limpiarFavoritoInvalido(id: String) {
-        Log.d(TAG, "Limpiando favorito inválido: $id")
-        // Eliminar del conjunto de IDs
-        val favoritosSet = getFavoritosIds().toMutableSet()
-        favoritosSet.remove(id)
-        prefs.edit().putStringSet(KEY_FAVORITOS, favoritosSet).commit()
-
-        // Eliminar datos de la propiedad
-        eliminarPropiedadFavorita(id)
-    }
-
-    /**
-     * Limpia todos los favoritos (para pruebas)
+     * Limpia todos los favoritos.
      */
     fun limpiarTodosFavoritos() {
         prefs.edit().clear().commit()
@@ -200,8 +129,9 @@ class FavoritosManager(context: Context) {
 
     companion object {
         private const val TAG = "FavoritosManager"
-        private const val PREF_NAME = "favoritos_prefs"
-        private const val KEY_FAVORITOS = "favoritos_ids"
-        private const val KEY_PROPIEDAD_PREFIX = "propiedad_"
+        private const val PREF_NAME = "favoritos_prefs_v2"
+        private const val KEY_FAVORITOS_LIST = "favoritos_list"
     }
 }
+
+

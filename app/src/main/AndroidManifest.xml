@@ -19,6 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ProyectoPDM2025GT2Grupo3VentadeBienesRaíces"
+        android:enableOnBackInvokedCallback="true"
         tools:targetApi="31">
         <activity
             android:name=".LoginActivity"
@@ -48,5 +49,3 @@
     </application>
 
 </manifest>
-
-
